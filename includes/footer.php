@@ -182,6 +182,10 @@
                     <?php if (!empty($footerInfo['icp'])): ?>
                         <span class="ml-2"><?= sanitizeHtml($footerInfo['icp']) ?></span>
                     <?php endif; ?>
+                    <span class="mx-1">·</span>
+                    <a href="https://github.com/stwy0716/Personal-blog" target="_blank" rel="noopener noreferrer" class="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+                        <i class="fa-brands fa-github mr-0.5"></i>MIT License
+                    </a>
                 </div>
                 <?php if ($footerSocialLinks): ?>
                 <div class="flex items-center gap-x-4">
