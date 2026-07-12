@@ -1,0 +1,24 @@
+# Data files (contain sensitive info)
+data/admin.json
+data/stats.json
+
+# Uploads (user content)
+uploads/*
+!uploads/.htaccess
+
+# Backups (contain data snapshots)
+backups/*
+!backups/.htaccess
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+*.log
