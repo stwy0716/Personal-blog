@@ -26,6 +26,43 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
+// Toggle single track enabled status
+if (isset($_GET['toggle_enabled'])) {
+    $toggleId = (int)$_GET['toggle_enabled'];
+    foreach ($musicList as &$m) {
+        if ((int)$m['id'] === $toggleId) {
+            $m['enabled'] = empty($m['enabled']) ? true : false;
+            logOperation('music_toggle', ($m['enabled'] ? '启用' : '禁用') . '了音乐：' . $m['title']);
+            break;
+        }
+    }
+    file_put_contents($musicFile, json_encode($musicList, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    header('Location: music.php?toggled=1');
+    exit;
+}
+
+// Bulk enable all
+if (isset($_GET['enable_all'])) {
+    foreach ($musicList as &$m) {
+        $m['enabled'] = true;
+    }
+    file_put_contents($musicFile, json_encode($musicList, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    logOperation('music_bulk_enable', '全部启用了所有音乐');
+    header('Location: music.php?bulk_enabled=1');
+    exit;
+}
+
+// Bulk disable all
+if (isset($_GET['disable_all'])) {
+    foreach ($musicList as &$m) {
+        $m['enabled'] = false;
+    }
+    file_put_contents($musicFile, json_encode($musicList, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    logOperation('music_bulk_disable', '全部禁用了所有音乐');
+    header('Location: music.php?bulk_disabled=1');
+    exit;
+}
+
 // Set active track
 if (isset($_GET['set_active'])) {
     $activeId = (int)$_GET['set_active'];
@@ -66,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_music'])) {
                     'artist' => $artist,
                     'file' => 'uploads/music/' . $filename,
                     'active' => $isFirst,
+                    'enabled' => true,
                     'added' => date('Y-m-d H:i')
                 ];
                 
@@ -94,6 +132,15 @@ include __DIR__ . '/admin_header.php';
         <?php endif; ?>
         <?php if (isset($_GET['activated'])): ?>
             <div class="mb-4 p-3 bg-blue-100 text-blue-700 rounded-xl text-sm">活跃曲目已更新。</div>
+        <?php endif; ?>
+        <?php if (isset($_GET['toggled'])): ?>
+            <div class="mb-4 p-3 bg-emerald-100 text-emerald-700 rounded-xl text-sm">曲目启用状态已更新。</div>
+        <?php endif; ?>
+        <?php if (isset($_GET['bulk_enabled'])): ?>
+            <div class="mb-4 p-3 bg-emerald-100 text-emerald-700 rounded-xl text-sm">已全部启用。</div>
+        <?php endif; ?>
+        <?php if (isset($_GET['bulk_disabled'])): ?>
+            <div class="mb-4 p-3 bg-amber-100 text-amber-700 rounded-xl text-sm">已全部禁用。</div>
         <?php endif; ?>
         <?php if (!empty($upload_error)): ?>
             <div class="mb-4 p-3 bg-red-100 text-red-700 rounded-xl text-sm"><?= $upload_error ?></div>
@@ -128,12 +175,24 @@ include __DIR__ . '/admin_header.php';
         <!-- Music List -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-7">
             <h3 class="font-semibold text-lg mb-5">音乐库（<?= count($musicList) ?>）</h3>
+            <?php if (!empty($musicList)): ?>
+            <div class="flex gap-2 mb-4">
+                <a href="?enable_all=1" class="text-xs px-3 h-8 flex items-center rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200">
+                    <i class="fa-solid fa-check-double mr-1"></i> 全部启用
+                </a>
+                <a href="?disable_all=1" onclick="return confirm('确认禁用所有曲目？')" class="text-xs px-3 h-8 flex items-center rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200">
+                    <i class="fa-solid fa-ban mr-1"></i> 全部禁用
+                </a>
+            </div>
+            <?php endif; ?>
             <?php if (empty($musicList)): ?>
                 <p class="text-zinc-400">暂未上传音乐。</p>
             <?php else: ?>
                 <div class="space-y-3">
-                    <?php foreach ($musicList as $m): ?>
-                        <div class="flex items-center justify-between border border-zinc-200 dark:border-zinc-700 rounded-xl px-5 py-4 <?= !empty($m['active']) ? 'bg-indigo-50 dark:bg-indigo-950/30 border-indigo-300 dark:border-indigo-700' : '' ?>">
+                    <?php foreach ($musicList as $m): 
+                        $isEnabled = !isset($m['enabled']) || $m['enabled'] !== false;
+                    ?>
+                        <div class="flex items-center justify-between border border-zinc-200 dark:border-zinc-700 rounded-xl px-5 py-4 <?= !empty($m['active']) ? 'bg-indigo-50 dark:bg-indigo-950/30 border-indigo-300 dark:border-indigo-700' : '' ?> <?= !$isEnabled ? 'opacity-50' : '' ?>">
                             <div class="flex items-center gap-x-4">
                                 <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-xl flex items-center justify-center">
                                     <i class="fa-solid fa-music text-indigo-600 dark:text-indigo-400"></i>
@@ -145,8 +204,15 @@ include __DIR__ . '/admin_header.php';
                                 <?php if (!empty($m['active'])): ?>
                                     <span class="ml-2 px-2 py-0.5 text-xs bg-indigo-600 text-white rounded-full">活跃</span>
                                 <?php endif; ?>
+                                <?php if (!$isEnabled): ?>
+                                    <span class="ml-2 px-2 py-0.5 text-xs bg-zinc-400 text-white rounded-full">已禁用</span>
+                                <?php endif; ?>
                             </div>
                             <div class="flex items-center gap-x-2">
+                                <label class="flex items-center gap-x-1.5 cursor-pointer select-none" title="<?= $isEnabled ? '点击禁用' : '点击启用' ?>">
+                                    <span class="text-xs text-zinc-500">启用</span>
+                                    <input type="checkbox" <?= $isEnabled ? 'checked' : '' ?> onchange="location.href='?toggle_enabled=<?= $m['id'] ?>'" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer">
+                                </label>
                                 <audio controls class="h-8" style="max-width: 200px">
                                     <source src="../<?= htmlspecialchars($m['file']) ?>" type="audio/mpeg">
                                 </audio>

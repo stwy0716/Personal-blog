@@ -158,6 +158,13 @@ $page_extra_head = '
 .lightbox-overlay img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 0.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.25s; }
 .lightbox-overlay.show img { transform: scale(1); }
 .diary-content img { border-radius: 0.75rem; margin: 1rem 0; }
+.diary-content .img-align-center { display: block; margin: 1.5rem auto; text-align: center; }
+.diary-content .img-align-left { display: block; margin: 1rem 0; }
+.diary-content .img-align-right { display: block; margin: 1rem 0; margin-left: auto; }
+.diary-content .img-float-left { float: left; margin: 0.5rem 1rem 0.5rem 0; }
+.diary-content .img-float-right { float: right; margin: 0.5rem 0 0.5rem 1rem; }
+.diary-content .img-float-left::after,
+.diary-content .img-float-right::after { content: ""; display: table; clear: both; }
 </style>
 ';
 

@@ -4,13 +4,18 @@
     $musicList = readJsonFile($musicFile);
     $musicShuffle = !empty($settings['music_shuffle']);
     $musicLoop = !empty($settings['music_loop']);
+    // Filter to only enabled tracks
+    $enabledTracks = array_filter($musicList, function($m) {
+        return !isset($m['enabled']) || $m['enabled'] !== false;
+    });
+    $enabledTracks = array_values($enabledTracks);
     $activeTrack = null;
-    foreach ($musicList as $m) {
+    foreach ($enabledTracks as $m) {
         if (!empty($m['active'])) { $activeTrack = $m; break; }
     }
-    if (!$activeTrack && !empty($musicList)) $activeTrack = $musicList[0];
+    if (!$activeTrack && !empty($enabledTracks)) $activeTrack = $enabledTracks[0];
     ?>
-    <?php if (!empty($musicList) && $footerMusicPlayer): ?>
+    <?php if (!empty($enabledTracks) && $footerMusicPlayer): ?>
     <div class="max-w-6xl mx-auto px-6 mt-16 mb-8">
         <div class="music-player rounded-3xl p-5 text-white shadow-xl" id="music-player-container">
             <div class="flex flex-col md:flex-row md:items-center gap-4">
@@ -39,7 +44,7 @@
                         <i class="fa-solid fa-volume-high text-white/60 text-sm"></i>
                         <input type="range" id="music-volume" min="0" max="100" value="60" class="w-20 h-1 accent-white" onchange="setVolume(this.value)">
                     </div>
-                    <?php if (count($musicList) > 1): ?>
+                    <?php if (count($enabledTracks) > 1): ?>
                     <button onclick="nextTrack()" class="w-9 h-9 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-xl transition-all">
                         <i class="fa-solid fa-forward text-sm"></i>
                     </button>
@@ -58,7 +63,7 @@
     <script>
     const musicTracks = <?= json_encode(array_map(function($m) {
         return ['title' => $m['title'], 'artist' => $m['artist'] ?? '', 'file' => $m['file']];
-    }, $musicList)) ?>;
+    }, $enabledTracks)) ?>;
     let currentTrackIndex = 0;
     const audio = document.getElementById('music-audio');
     const playIcon = document.getElementById('music-play-icon');
@@ -68,8 +73,8 @@
     const titleEl = document.getElementById('music-title');
     const artistEl = document.getElementById('music-artist');
 
-    // Find active track index
-    <?php foreach ($musicList as $i => $m): ?>
+    // Find active track index among enabled tracks
+    <?php foreach ($enabledTracks as $i => $m): ?>
         <?php if (!empty($m['active'])): ?>
         currentTrackIndex = <?= $i ?>;
         <?php endif; ?>
