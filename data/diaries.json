@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Building My Personal Homepage from Scratch",
+    "date": "2026-06-15",
+    "excerpt": "A deep dive into how I designed and built a lightweight personal homepage system using PHP and JSON storage.",
+    "content": "<h2>Introduction</h2><p>I've always wanted a digital space that's truly mine. So I spent a few days building this personal homepage system from the ground up.</p><h3>Key Features</h3><ul><li>Frontend built with Tailwind CSS + vanilla JavaScript for responsiveness and dark mode</li><li>Backend uses PHP + JSON file storage - simple and lightweight, no database needed</li><li>Rich text diary entries with image support</li><li>Guestbook with nested replies and likes</li></ul><p>The whole experience taught me a lot about keeping things simple yet functional.</p>",
+    "tags": ["Tech", "Project"],
+    "status": "published",
+    "pinned": true
+  },
+  {
+    "id": 2,
+    "title": "Travel Photography: Slow Living in Yunnan",
+    "date": "2026-05-28",
+    "excerpt": "Rented a small courtyard by the Erhai Lake and stayed for two weeks. A journey of self-reflection and beautiful landscapes.",
+    "content": "<h2>The Charm of Dali</h2><p>Traveling south from the ancient city of Lijiang, I arrived in Dali. The Cangshan Mountains and Erhai Lake under blue skies truly lived up to their reputation.</p><p>Here, I completely slowed down. Mornings coding at a cafe in the old town, afternoons exploring nearby villages on an e-bike.</p><h3>Photography Highlights</h3><p>Brought both film and digital cameras, shot nearly 30 rolls of film. Especially loved using black and white film to capture portraits of local elders.</p>",
+    "tags": ["Travel", "Photography", "Life"],
+    "status": "published",
+    "pinned": false
+  },
+  {
+    "id": 3,
+    "title": "Thoughts on Productivity and Creativity",
+    "date": "2026-06-10",
+    "excerpt": "After reading 'Deep Work' and 'Atomic Habits', I've been experimenting with methods to maintain high creativity and efficiency.",
+    "content": "<h2>The Importance of Deep Work</h2><p>In the age of information overload, staying focused is increasingly difficult. I tried the 'time blocking' method: dedicating 3-4 hours each day to deep work.</p><h3>My Practice</h3><ol><li><strong>Golden 2 Hours in the Morning</strong>: No phone after waking up, jump straight into the most important task.</li><li><strong>Pomodoro + Walking</strong>: Work for 50 minutes, mandatory 10-minute break with a walk.</li></ol><p>These simple changes have dramatically improved my output quality.</p>",
+    "tags": ["Thoughts", "Productivity"],
+    "status": "published",
+    "pinned": false
+  }
+]

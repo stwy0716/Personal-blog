@@ -1,0 +1,122 @@
+# ============================================================
+# 个人主页系统 Nginx 配置示例
+# ============================================================
+#
+# 使用方法：
+#   1. 将此文件复制为您的 Nginx 站点配置文件，例如：
+#      cp nginx.conf.example /etc/nginx/sites-available/personal-homepage
+#   2. 根据实际情况修改 server_name 和 root 路径
+#   3. 创建软链接并测试配置：
+#      ln -s /etc/nginx/sites-available/personal-homepage /etc/nginx/sites-enabled/
+#      nginx -t
+#   4. 重载 Nginx：
+#      nginx -s reload
+#
+# 注意事项：
+#   - root 指向项目的 public 目录或网站根目录
+#   - 需要安装 PHP-FPM（如 php8.1-fpm）并与 Nginx 配合使用
+# ============================================================
+
+server {
+    listen 80;
+    server_name your-domain.com;  # 修改为您的域名或 IP
+
+    # 网站根目录，修改为实际部署路径
+    root /var/www/personal-homepage;
+    index index.php index.html;
+
+    # 默认字符集
+    charset utf-8;
+
+    # ----- 访问日志 -----
+    access_log /var/log/nginx/personal-homepage.access.log;
+    error_log  /var/log/nginx/personal-homepage.error.log;
+
+    # ----- 禁止访问敏感目录 -----
+    # 禁止访问 data 目录（存储 JSON 数据，包含配置和密码哈希）
+    location ^~ /data/ {
+        deny all;
+        return 403;
+    }
+
+    # 禁止访问 backups 目录（存储备份文件）
+    location ^~ /backups/ {
+        deny all;
+        return 403;
+    }
+
+    # 禁止访问隐藏文件（如 .htaccess、.env、.git 等）
+    location ~ /\. {
+        deny all;
+        return 403;
+    }
+
+    # ----- 静态资源缓存规则 -----
+    # 图片文件缓存 1 年
+    location ~* \.(jpg|jpeg|png|gif|webp|svg|ico|bmp)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # CSS 和 JavaScript 文件缓存 1 个月
+    location ~* \.(css|js)$ {
+        expires 1M;
+        add_header Cache-Control "public";
+        access_log off;
+    }
+
+    # 音频和视频文件缓存 1 个月
+    location ~* \.(mp3|mp4|ogg|wav|flac|webm)$ {
+        expires 1M;
+        add_header Cache-Control "public";
+        access_log off;
+    }
+
+    # 字体文件缓存 1 年
+    location ~* \.(woff|woff2|ttf|eot|otf)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # ----- 伪静态规则 -----
+    # 将所有不存在的文件/目录请求重写到 index.php
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # ----- PHP 处理 -----
+    # 将 PHP 请求转发给 PHP-FPM
+    # 请根据实际安装的 PHP 版本修改 socket 路径
+    location ~ \.php$ {
+        # 确保请求的文件存在，防止伪造请求
+        try_files $uri =404;
+
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;  # 根据实际 PHP 版本修改
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+
+        # 传递标准 FastCGI 参数
+        include fastcgi_params;
+        include fastcgi.conf;
+
+        # 超时设置
+        fastcgi_connect_timeout 60;
+        fastcgi_send_timeout 60;
+        fastcgi_read_timeout 60;
+    }
+
+    # ----- 安全相关 -----
+    # 禁止访问敏感文件类型
+    location ~* \.(json|lock|env|yml|yaml|log|sql|bak|swp)$ {
+        deny all;
+        return 403;
+    }
+
+    # 禁止访问 README 等信息文件
+    location ~* /(README|LICENSE|CHANGELOG|composer\.(json|lock))$ {
+        deny all;
+        return 403;
+    }
+}

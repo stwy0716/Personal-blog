@@ -1,0 +1,21 @@
+# 个人主页系统 Docker Compose 配置
+# 使用方式: docker-compose up -d
+
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: personal-homepage
+    ports:
+      # 映射宿主机 8080 端口到容器 80 端口
+      # 访问地址: http://localhost:8080
+      - "8080:80"
+    volumes:
+      # 挂载数据目录，保证容器重建后数据不丢失
+      - ./data:/var/www/html/data
+      # 挂载上传目录，保证上传的图片和文件持久化
+      - ./uploads:/var/www/html/uploads
+    restart: unless-stopped

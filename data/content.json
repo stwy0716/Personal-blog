@@ -1,0 +1,314 @@
+{
+    "site": {
+        "title": "我的个人空间",
+        "subtitle": "开发者 / 创作者 / 探索者",
+        "avatar": "https://picsum.photos/id/1005/320/320",
+        "title_prefix": "你好，我是"
+    },
+    "settings": {
+        "glassmorphism_enabled": true,
+        "glassmorphism_blur": 16,
+        "glassmorphism_opacity": 0.72,
+        "page_loader_enabled": true,
+        "music_autoplay": false,
+        "reading_progress": true,
+        "dark_mode_toggle": true,
+        "diary_front_edit": true,
+        "guestbook_enabled": true,
+        "diary_comments_enabled": true,
+        "comment_rich_text": true,
+        "footer_social_links": true,
+        "footer_music_player": true,
+        "theme_color": "indigo",
+        "language": "zh"
+    },
+    "blog_intro": "欢迎来到我的数字角落！这里记录我的技术探索、生活故事和成长感悟。每一天都是学习新事物的好机会。",
+    "about": {
+        "intro": "我是一名热爱生活的全栈开发者，喜欢构建美好的数字产品，也喜欢用镜头记录日常的点滴。",
+        "timeline": [
+            {
+                "year": "2019",
+                "title": "开始编程",
+                "description": "在大学里发现了 Python 和 Web 开发的世界，从此爱上了从零开始构建产品的过程。"
+            },
+            {
+                "year": "2022",
+                "title": "全栈之旅",
+                "description": "深入学习 Node.js、PHP 和数据库，从前端转向全栈开发。"
+            },
+            {
+                "year": "2026",
+                "title": "新的篇章",
+                "description": "搭建了这个个人主页系统，用来记录旅程并与世界分享想法。"
+            }
+        ]
+    },
+    "skills": [
+        "HTML5 & CSS3",
+        "JavaScript / TypeScript",
+        "React / Vue",
+        "PHP / Laravel",
+        "Python",
+        "Docker & Git",
+        "Photography"
+    ],
+    "contact": {
+        "email": "hello@example.com",
+        "wechat": "my_wechat",
+        "github": "https://github.com/example",
+        "qq": "",
+        "bilibili": ""
+    },
+    "homepage": {
+        "explore_title": "探索我的世界",
+        "card_about_title": "关于我",
+        "card_about_desc": "我的成长时间线、技能树和人生旅程。了解我是如何走到今天的。",
+        "card_diary_title": "日记",
+        "card_diary_desc": "生活故事、技术心得与旅行笔记。支持富文本与图片。",
+        "card_guestbook_title": "留言板",
+        "card_guestbook_desc": "留下你的足迹，点赞与回复。所有留言永久保存。"
+    },
+    "footer": {
+        "text": "个人空间。用心构建。",
+        "icp": ""
+    },
+    "social_links": {
+        "github": "",
+        "bilibili": "",
+        "zhihu": "",
+        "twitter": "",
+        "weibo": ""
+    },
+    "seo": {
+        "description": "一个用于分享技术心得、生活故事和创意作品的个人主页。",
+        "keywords": "个人主页,博客,日记,作品集"
+    },
+    "nav": {
+        "home": "首页",
+        "about": "关于",
+        "diary": "日记",
+        "guestbook": "留言板"
+    },
+    "i18n": {
+        "zh": {
+            "nav": {
+                "home": "首页",
+                "about": "关于",
+                "diary": "日记",
+                "guestbook": "留言板"
+            },
+            "footer": {
+                "text": "个人空间。用心构建。",
+                "playing": "正在播放",
+                "no_track": "暂无曲目",
+                "tooltip_theme": "切换主题",
+                "tooltip_back_to_top": "回到顶部"
+            },
+            "index": {
+                "explore_title": "探索我的世界",
+                "card_about_title": "关于我",
+                "card_about_desc": "我的成长时间线、技能树和人生旅程。",
+                "card_diary_title": "日记",
+                "card_diary_desc": "生活故事、技术心得与旅行笔记。支持富文本与图片。",
+                "card_guestbook_title": "留言板",
+                "card_guestbook_desc": "留下你的足迹，点赞与回复。所有留言永久保存。",
+                "personal_digital_space": "个人数字空间",
+                "read_latest_journal": "阅读最新日记",
+                "guestbook": "留言板",
+                "blog_intro_title": "博客简介",
+                "editable_hint": "可通过后台面板 > 内容管理编辑",
+                "edit": "编辑",
+                "view_my_story": "了解我的故事",
+                "browse_all_entries": "浏览所有日记",
+                "leave_a_message": "留言",
+                "discover_more": "发现更多",
+                "tags_cloud": "标签云",
+                "tags_cloud_desc": "探索所有话题，按标签浏览日记。",
+                "browse_tags": "浏览标签",
+                "search": "搜索",
+                "search_desc": "通过关键词或标签搜索所有日记。",
+                "start_searching": "开始搜索"
+            },
+            "about": {
+                "intro": "我是一名热爱生活的全栈开发者，喜欢构建美好的数字产品，也喜欢用镜头记录日常。",
+                "timeline_title": "时间线",
+                "about_title": "关于我",
+                "about_subtitle": "我的成长旅程与生活哲学",
+                "my_story_label": "我的故事",
+                "welcome_intro": "欢迎了解我的故事",
+                "skills_title": "技能",
+                "no_timeline": "暂无时间线数据，请在后台添加。",
+                "no_skills": "暂无技能数据",
+                "contact_title": "联系方式",
+                "email_label": "邮箱",
+                "wechat_label": "微信",
+                "github_label": "GitHub",
+                "view_projects": "查看项目"
+            },
+            "guestbook": {
+                "title": "留言板",
+                "subtitle": "留下你的想法、建议或问候",
+                "placeholder_name": "你的名字",
+                "placeholder_content": "写下你想说的话...",
+                "submit": "提交留言",
+                "reply": "回复",
+                "no_messages": "暂无留言，来做第一个留言的人吧！",
+                "closed_title": "留言板已关闭",
+                "closed_desc": "管理员已关闭留言板功能。",
+                "back_home": "返回首页",
+                "label": "留言板",
+                "leave_message": "留言",
+                "your_name": "你的名字",
+                "message": "留言内容",
+                "placeholder_message": "写下你想说的话...",
+                "placeholder_reply": "回复...",
+                "empty_message": "留言内容不能为空",
+                "submitting": "提交中...",
+                "submit_failed": "提交失败，请重试",
+                "network_error": "网络错误，请检查服务器",
+                "already_liked": "你已经点赞过了",
+                "empty_reply": "回复内容不能为空",
+                "reply_failed": "回复失败",
+                "playing": "正在播放",
+                "no_track": "暂无曲目",
+                "tooltip_theme": "切换主题",
+                "tooltip_back_to_top": "回到顶部",
+                "manage_content": "管理内容"
+            },
+            "diary": {
+                "title": "日记",
+                "subtitle": "记录生活、技术与思考",
+                "read_more": "阅读更多",
+                "tags": "标签",
+                "back_to_list": "返回列表",
+                "diary_detail": {
+                    "not_published": "该日记尚未发布",
+                    "check_back_later": "请稍后再来看看。",
+                    "back_to_journal": "返回日记",
+                    "draft_label": "草稿",
+                    "edit_entry": "编辑此篇",
+                    "all_entries": "所有日记",
+                    "comments_title": "评论",
+                    "nickname_label": "昵称",
+                    "your_name_placeholder": "你的名字",
+                    "comment_label": "评论",
+                    "comment_placeholder": "写下你的评论...",
+                    "post_comment": "发表评论",
+                    "no_comments": "暂无评论，来做第一个评论的人吧！",
+                    "discuss_guestbook": "去留言板讨论",
+                    "toc_title": "目录"
+                }
+            }
+        },
+        "en": {
+            "nav": {
+                "home": "Home",
+                "about": "About",
+                "diary": "Journal",
+                "guestbook": "Guestbook"
+            },
+            "footer": {
+                "text": "Personal Space. Built with care.",
+                "playing": "Playing",
+                "no_track": "No track",
+                "tooltip_theme": "Toggle theme",
+                "tooltip_back_to_top": "Back to top"
+            },
+            "index": {
+                "explore_title": "Explore My World",
+                "card_about_title": "About Me",
+                "card_about_desc": "My timeline, growth journey, and skill tree. Learn how I got to where I am today.",
+                "card_diary_title": "Journal",
+                "card_diary_desc": "Life stories, tech insights, and travel notes. Rich text with image support.",
+                "card_guestbook_title": "Guestbook",
+                "card_guestbook_desc": "Leave a message, like, and reply. All messages are saved permanently.",
+                "personal_digital_space": "Personal Digital Space",
+                "read_latest_journal": "Read Latest Journal",
+                "guestbook": "Guestbook",
+                "blog_intro_title": "Blog Intro",
+                "editable_hint": "Editable via Admin Panel > Content Management",
+                "edit": "Edit",
+                "view_my_story": "View My Story",
+                "browse_all_entries": "Browse All Entries",
+                "leave_a_message": "Leave a Message",
+                "discover_more": "Discover More",
+                "tags_cloud": "Tags Cloud",
+                "tags_cloud_desc": "Explore all topics, browse journal entries by tag.",
+                "browse_tags": "Browse Tags",
+                "search": "Search",
+                "search_desc": "Search all journal entries by keyword or tag.",
+                "start_searching": "Start Searching"
+            },
+            "about": {
+                "intro": "I'm a passionate full-stack developer and life explorer. I love building beautiful digital products and capturing everyday moments through photography.",
+                "timeline_title": "Timeline",
+                "about_title": "About Me",
+                "about_subtitle": "My Growth Journey & Life Philosophy",
+                "my_story_label": "My Story",
+                "welcome_intro": "Welcome to know my story",
+                "skills_title": "Skills",
+                "no_timeline": "No timeline data yet. Please add in admin panel.",
+                "no_skills": "No skills data",
+                "contact_title": "Contact",
+                "email_label": "Email",
+                "wechat_label": "WeChat",
+                "github_label": "GitHub",
+                "view_projects": "View Projects"
+            },
+            "guestbook": {
+                "title": "Guestbook",
+                "subtitle": "Leave your thoughts, suggestions, or greetings",
+                "placeholder_name": "Your name",
+                "placeholder_content": "Write something...",
+                "submit": "Post Message",
+                "reply": "Reply",
+                "no_messages": "No messages yet. Be the first to leave one!",
+                "closed_title": "Guestbook Closed",
+                "closed_desc": "The admin has closed the guestbook.",
+                "back_home": "Back to Home",
+                "label": "Guestbook",
+                "leave_message": "Leave a Message",
+                "your_name": "Your Name",
+                "message": "Message",
+                "placeholder_message": "Write something...",
+                "placeholder_reply": "Reply...",
+                "empty_message": "Message cannot be empty",
+                "submitting": "Submitting...",
+                "submit_failed": "Submit failed, please try again",
+                "network_error": "Network error, please check server",
+                "already_liked": "You already liked this",
+                "empty_reply": "Reply cannot be empty",
+                "reply_failed": "Reply failed",
+                "playing": "Playing",
+                "no_track": "No track",
+                "tooltip_theme": "Toggle theme",
+                "tooltip_back_to_top": "Back to top",
+                "manage_content": "Manage Content"
+            },
+            "diary": {
+                "title": "Journal",
+                "subtitle": "Life, tech, and reflections",
+                "read_more": "Read More",
+                "tags": "Tags",
+                "back_to_list": "Back to List",
+                "diary_detail": {
+                    "not_published": "This entry is not published",
+                    "check_back_later": "Please check back later.",
+                    "back_to_journal": "Back to Journal",
+                    "draft_label": "Draft",
+                    "edit_entry": "Edit This Entry",
+                    "all_entries": "All Entries",
+                    "comments_title": "Comments",
+                    "nickname_label": "Nickname",
+                    "your_name_placeholder": "Your name",
+                    "comment_label": "Comment",
+                    "comment_placeholder": "Write your comment...",
+                    "post_comment": "Post Comment",
+                    "no_comments": "No comments yet. Be the first to comment!",
+                    "discuss_guestbook": "Discuss in Guestbook",
+                    "toc_title": "Table of Contents"
+                }
+            }
+        }
+    }
+}
