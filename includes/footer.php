@@ -251,55 +251,8 @@
         if (btn) btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
     });
     
-    // Image lightbox
-    (function() {
-        let lightbox = null;
-        let lightboxImg = null;
-        
-        function createLightbox() {
-            if (lightbox) return;
-            lightbox = document.createElement('div');
-            lightbox.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/90 opacity-0 transition-opacity duration-300 cursor-zoom-out';
-            lightbox.style.backdropFilter = 'blur(4px)';
-            lightboxImg = document.createElement('img');
-            lightboxImg.className = 'max-w-[90vw] max-h-[90vh] object-contain transform scale-90 transition-transform duration-300';
-            lightbox.appendChild(lightboxImg);
-            document.body.appendChild(lightbox);
-            
-            lightbox.addEventListener('click', closeLightbox);
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeLightbox();
-            });
-        }
-        
-        function openLightbox(src) {
-            createLightbox();
-            lightboxImg.src = src;
-            lightbox.classList.remove('pointer-events-none');
-            requestAnimationFrame(function() {
-                lightbox.style.opacity = '1';
-                lightboxImg.style.transform = 'scale(1)';
-            });
-            document.body.style.overflow = 'hidden';
-        }
-        
-        function closeLightbox() {
-            if (!lightbox) return;
-            lightbox.style.opacity = '0';
-            lightboxImg.style.transform = 'scale(0.9)';
-            lightbox.classList.add('pointer-events-none');
-            document.body.style.overflow = '';
-        }
-        
-        document.querySelectorAll('img').forEach(function(img) {
-            if (img.closest('nav') || img.closest('header') || img.closest('#music-player-container')) return;
-            img.style.cursor = 'zoom-in';
-            img.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (img.src) openLightbox(img.src);
-            });
-        });
-    })();
+
     </script>
+    <script src="assets/js/enhancements.js"></script>
 </body>
 </html>

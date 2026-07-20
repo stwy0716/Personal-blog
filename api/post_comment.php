@@ -10,6 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+$token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_POST['csrf_token'] ?? '';
+if (!verifyCsrfToken($token)) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'CSRF token invalid']);
+    exit;
+}
+
 // 速率限制：每分钟最多5次留言
 if (!checkRateLimit('guestbook_post', 5, 60)) {
     http_response_code(429);
@@ -48,12 +55,17 @@ $messages[] = $newMessage;
 setcookie('guestbook_name', $name, time() + 30 * 24 * 3600, '/', '', false, true);
 
 if (writeJsonFile($guestbookFile, $messages)) {
-    sendCommentNotification('comment', [
-        'name' => $name,
-        'content' => $content,
-        'link' => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/guestbook.php',
-        'page_title' => '留言板'
-    ]);
+    // 非阻塞发送邮件通知
+    try {
+        sendCommentNotification('comment', [
+            'name' => $name,
+            'content' => $content,
+            'link' => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/guestbook.php',
+            'page_title' => '留言板'
+        ]);
+    } catch (Throwable $e) {
+        // 邮件发送失败不影响留言成功
+    }
     echo json_encode(['success' => true, 'id' => $newId, 'message' => '留言成功']);
 } else {
     http_response_code(500);

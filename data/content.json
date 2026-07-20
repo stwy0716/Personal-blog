@@ -87,7 +87,9 @@
         "home": "首页",
         "about": "关于",
         "diary": "日记",
-        "guestbook": "留言板"
+        "guestbook": "留言板",
+        "archive": "归档",
+        "hot": "热门"
     },
     "i18n": {
         "zh": {
@@ -95,7 +97,9 @@
                 "home": "首页",
                 "about": "关于",
                 "diary": "日记",
-                "guestbook": "留言板"
+                "guestbook": "留言板",
+                "archive": "归档",
+                "hot": "热门"
             },
             "footer": {
                 "text": "个人空间。用心构建。",
@@ -127,7 +131,9 @@
                 "browse_tags": "浏览标签",
                 "search": "搜索",
                 "search_desc": "通过关键词或标签搜索所有日记。",
-                "start_searching": "开始搜索"
+                "start_searching": "开始搜索",
+                "popular_articles": "热门文章",
+                "view_all_hot": "查看全部"
             },
             "about": {
                 "intro": "我是一名热爱生活的全栈开发者，喜欢构建美好的数字产品，也喜欢用镜头记录日常。",
@@ -179,8 +185,13 @@
                 "title": "日记",
                 "subtitle": "记录生活、技术与思考",
                 "read_more": "阅读更多",
+                "all_categories": "全部分类",
+                "views_count": "阅读",
                 "tags": "标签",
                 "back_to_list": "返回列表",
+                "life_and_thoughts": "生活与思考",
+                "placeholder_search": "标题或内容...",
+                "no_diary_yet": "暂无日记。在后台面板发布你的第一篇日记。",
                 "diary_detail": {
                     "not_published": "该日记尚未发布",
                     "check_back_later": "请稍后再来看看。",
@@ -196,8 +207,69 @@
                     "post_comment": "发表评论",
                     "no_comments": "暂无评论，来做第一个评论的人吧！",
                     "discuss_guestbook": "去留言板讨论",
-                    "toc_title": "目录"
+                    "toc_title": "目录",
+                    "prev_entry": "上一篇",
+                    "next_entry": "下一篇",
+                    "chars": "字",
+                    "minutes": "分钟",
+                    "enter_password": "请输入密码以查看此日记",
+                    "password_protected": "密码保护",
+                    "will_publish_at": "该日记将于 %s 发布",
+                    "share": "分享",
+                    "copy_link": "复制链接",
+                    "copied": "已复制!",
+                    "views": "浏览"
                 }
+            },
+            "search": {
+                "placeholder": "标题、内容或标签...",
+                "filter_by_tag": "按标签筛选：",
+                "start_typing": "输入关键词或选择标签开始搜索。",
+                "no_results": "未找到相关结果",
+                "try_other_keywords": "尝试其他关键词或浏览所有",
+                "results_found": "找到 %d 个结果"
+            },
+            "tags": {
+                "no_tags": "暂无标签。在后台为日记添加标签。",
+                "total": "总计"
+            },
+            "friends": {
+                "title": "友情链接",
+                "my_friends": "我的朋友们",
+                "description": "收录了我欣赏的站点和朋友们的主页，欢迎互相交流学习。",
+                "visit": "访问",
+                "view_links": "查看链接",
+                "no_friends": "暂无友情链接"
+            },
+            "archive": {
+                "title": "归档",
+                "subtitle": "按时间线浏览所有日记",
+                "entries_count": "篇日记",
+                "back_to_home": "返回首页"
+            },
+            "hot": {
+                "title": "热门",
+                "subtitle": "阅读量最高的日记",
+                "rank": "排名",
+                "views": "阅读",
+                "back_to_home": "返回首页"
+            },
+            "subscribe": {
+                "subscribe": "订阅更新",
+                "subscribe_email": "请输入您的邮箱",
+                "subscribe_success": "订阅成功！",
+                "unsubscribe": "取消订阅",
+                "unsubscribe_success": "您已成功取消订阅。",
+                "description": "订阅以获取最新文章和动态通知。",
+                "email_label": "邮箱地址",
+                "email_placeholder": "请输入您的邮箱",
+                "submit": "立即订阅",
+                "submitting": "提交中...",
+                "success": "订阅成功！",
+                "error": "订阅失败，请重试",
+                "network_error": "网络错误，请检查网络连接",
+                "email_required": "请输入邮箱地址",
+                "unsubscribe_hint": "您可以随时通过邮件中的链接取消订阅。"
             }
         },
         "en": {
@@ -205,7 +277,9 @@
                 "home": "Home",
                 "about": "About",
                 "diary": "Journal",
-                "guestbook": "Guestbook"
+                "guestbook": "Guestbook",
+                "archive": "Archive",
+                "hot": "Hot"
             },
             "footer": {
                 "text": "Personal Space. Built with care.",
@@ -237,7 +311,9 @@
                 "browse_tags": "Browse Tags",
                 "search": "Search",
                 "search_desc": "Search all journal entries by keyword or tag.",
-                "start_searching": "Start Searching"
+                "start_searching": "Start Searching",
+                "popular_articles": "Popular Articles",
+                "view_all_hot": "View All"
             },
             "about": {
                 "intro": "I'm a passionate full-stack developer and life explorer. I love building beautiful digital products and capturing everyday moments through photography.",
@@ -289,8 +365,13 @@
                 "title": "Journal",
                 "subtitle": "Life, tech, and reflections",
                 "read_more": "Read More",
+                "all_categories": "All Categories",
+                "views_count": "views",
                 "tags": "Tags",
                 "back_to_list": "Back to List",
+                "life_and_thoughts": "Life & Thoughts",
+                "placeholder_search": "Title or content...",
+                "no_diary_yet": "No diary entries yet. Publish your first entry from the admin panel.",
                 "diary_detail": {
                     "not_published": "This entry is not published",
                     "check_back_later": "Please check back later.",
@@ -306,8 +387,69 @@
                     "post_comment": "Post Comment",
                     "no_comments": "No comments yet. Be the first to comment!",
                     "discuss_guestbook": "Discuss in Guestbook",
-                    "toc_title": "Table of Contents"
+                    "toc_title": "Table of Contents",
+                    "prev_entry": "Previous",
+                    "next_entry": "Next",
+                    "chars": "chars",
+                    "minutes": "min",
+                    "enter_password": "Please enter the password to view this entry",
+                    "password_protected": "Password Protected",
+                    "will_publish_at": "This entry will be published at %s",
+                    "share": "Share",
+                    "copy_link": "Copy Link",
+                    "copied": "Copied!",
+                    "views": "views"
                 }
+            },
+            "search": {
+                "placeholder": "Title, content or tags...",
+                "filter_by_tag": "Filter by tag:",
+                "start_typing": "Enter keywords or select a tag to start searching.",
+                "no_results": "No results found",
+                "try_other_keywords": "Try other keywords or browse all ",
+                "results_found": "Found %d results"
+            },
+            "tags": {
+                "no_tags": "No tags yet. Add tags to diaries in the admin panel.",
+                "total": "total"
+            },
+            "friends": {
+                "title": "Friend Links",
+                "my_friends": "My Friends",
+                "description": "A collection of sites I admire and friends' homepages. Welcome to exchange and learn.",
+                "visit": "Visit",
+                "view_links": "View Links",
+                "no_friends": "No friend links yet"
+            },
+            "archive": {
+                "title": "Archive",
+                "subtitle": "Browse all entries by timeline",
+                "entries_count": "entries",
+                "back_to_home": "Back to Home"
+            },
+            "hot": {
+                "title": "Hot",
+                "subtitle": "Most read journal entries",
+                "rank": "Rank",
+                "views": "views",
+                "back_to_home": "Back to Home"
+            },
+            "subscribe": {
+                "subscribe": "Subscribe",
+                "subscribe_email": "Enter your email",
+                "subscribe_success": "Subscribed successfully!",
+                "unsubscribe": "Unsubscribe",
+                "unsubscribe_success": "You have been unsubscribed.",
+                "description": "Subscribe to receive notifications for latest articles and updates.",
+                "email_label": "Email Address",
+                "email_placeholder": "Enter your email",
+                "submit": "Subscribe Now",
+                "submitting": "Submitting...",
+                "success": "Subscribed successfully!",
+                "error": "Subscription failed, please try again",
+                "network_error": "Network error, please check your connection",
+                "email_required": "Please enter your email address",
+                "unsubscribe_hint": "You can unsubscribe at any time via the link in the email."
             }
         }
     }

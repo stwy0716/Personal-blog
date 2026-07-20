@@ -15,7 +15,18 @@ $musicFile = __DIR__ . '/../data/music.json';
 $musicList = readJsonFile($musicFile);
 $operationLogs = getOperationLogs(5);
 
-// 最近7天访问统计
+// 最近14天访问统计（用于 Chart.js）
+$chartDays14 = [];
+$chartData14 = [];
+for ($i = 13; $i >= 0; $i--) {
+    $day = date('Y-m-d', strtotime("-$i days"));
+    $chartDays14[] = date('m-d', strtotime("-$i days"));
+    $pv = $stats[$day]['pv'] ?? 0;
+    $uv = $stats[$day]['uv'] ?? 0;
+    $chartData14[] = ['pv' => $pv, 'uv' => $uv];
+}
+
+// 最近7天访问统计（保留原有CSS柱状图数据）
 $chartDays = [];
 $chartData = [];
 $maxVal = 1;
@@ -26,6 +37,22 @@ for ($i = 6; $i >= 0; $i--) {
     $uv = $stats[$day]['uv'] ?? 0;
     $chartData[] = ['pv' => $pv, 'uv' => $uv];
     $maxVal = max($maxVal, $pv, $uv);
+}
+
+// 热门日记（按浏览量降序取前5）
+$popularDiaries = $diaries;
+usort($popularDiaries, fn($a, $b) => ($b['views'] ?? 0) <=> ($a['views'] ?? 0));
+$popularDiaries = array_slice($popularDiaries, 0, 5);
+
+// 评论摘要统计
+$totalComments = count($comments);
+$totalGuestbook = count($messages);
+$pendingCount = 0;
+foreach ($comments as $c) {
+    if (($c['status'] ?? 'published') === 'pending') $pendingCount++;
+}
+foreach ($messages as $m) {
+    if (($m['status'] ?? 'published') === 'pending') $pendingCount++;
 }
 
 $admin_page_title = '仪表盘';
@@ -107,29 +134,43 @@ include __DIR__ . '/admin_header.php';
             </div>
             <div class="md:col-span-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-5 flex flex-col">
                 <h3 class="font-semibold mb-4 flex items-center gap-x-2">
-                    <i class="fa-solid fa-chart-bar text-indigo-500"></i> 近7天
+                    <i class="fa-solid fa-chart-line text-indigo-500"></i> 近14天趋势
                 </h3>
-                <div class="flex-1 flex items-end justify-between gap-x-2" style="min-height: 160px;">
-                    <?php foreach ($chartData as $idx => $d): 
-                        $pvH = $maxVal > 0 ? round(($d['pv'] / $maxVal) * 100) : 0;
-                        $uvH = $maxVal > 0 ? round(($d['uv'] / $maxVal) * 100) : 0;
-                    ?>
-                    <div class="flex-1 flex flex-col items-center justify-end gap-y-1">
-                        <div class="w-full flex items-end justify-center gap-x-0.5" style="height: 120px;">
-                            <div class="w-full max-w-[14px] rounded-t-md bg-indigo-400 dark:bg-indigo-600 relative group" style="height: <?= max(4, $pvH) ?>%;">
-                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block text-[10px] bg-zinc-800 text-white px-1.5 py-0.5 rounded whitespace-nowrap z-10">PV: <?= $d['pv'] ?></div>
-                            </div>
-                            <div class="w-full max-w-[14px] rounded-t-md bg-emerald-400 dark:bg-emerald-600 relative group" style="height: <?= max(4, $uvH) ?>%;">
-                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block text-[10px] bg-zinc-800 text-white px-1.5 py-0.5 rounded whitespace-nowrap z-10">UV: <?= $d['uv'] ?></div>
-                            </div>
-                        </div>
-                        <span class="text-[10px] text-zinc-400"><?= $chartDays[$idx] ?></span>
-                    </div>
-                    <?php endforeach; ?>
+                <div class="flex-1" style="min-height: 200px;">
+                    <canvas id="visitTrendChart"></canvas>
                 </div>
-                <div class="flex items-center justify-center gap-x-4 mt-3 text-xs text-zinc-500">
-                    <span class="flex items-center gap-x-1"><span class="w-2 h-2 rounded-sm bg-indigo-400 dark:bg-indigo-600 inline-block"></span> PV</span>
-                    <span class="flex items-center gap-x-1"><span class="w-2 h-2 rounded-sm bg-emerald-400 dark:bg-emerald-600 inline-block"></span> UV</span>
+            </div>
+        </div>
+
+        <!-- Charts & Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="md:col-span-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-5">
+                <h3 class="font-semibold mb-4 flex items-center gap-x-2">
+                    <i class="fa-solid fa-fire text-orange-500"></i> 热门日记 Top 5
+                </h3>
+                <div style="min-height: 200px;">
+                    <canvas id="popularDiariesChart"></canvas>
+                </div>
+            </div>
+            <div class="md:col-span-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-5 flex flex-col">
+                <h3 class="font-semibold mb-4 flex items-center gap-x-2">
+                    <i class="fa-solid fa-comments text-violet-500"></i> 评论摘要
+                </h3>
+                <div class="flex-1 flex flex-col justify-center gap-y-4">
+                    <div class="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-800 rounded-xl">
+                        <span class="text-sm text-zinc-500">日记评论</span>
+                        <span class="text-2xl font-bold"><?= $totalComments ?></span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-800 rounded-xl">
+                        <span class="text-sm text-zinc-500">留言板消息</span>
+                        <span class="text-2xl font-bold"><?= $totalGuestbook ?></span>
+                    </div>
+                    <?php if ($pendingCount > 0): ?>
+                    <div class="flex items-center justify-between p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
+                        <span class="text-sm text-amber-600 dark:text-amber-400">待审核</span>
+                        <span class="text-2xl font-bold text-amber-600 dark:text-amber-400"><?= $pendingCount ?></span>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -154,5 +195,110 @@ include __DIR__ . '/admin_header.php';
             <?php endif; ?>
         </div>
     </div>
+
+    <script>
+    (function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+        const textColor = isDark ? '#a1a1aa' : '#71717a';
+        const tickColor = isDark ? '#d4d4d8' : '#3f3f46';
+
+        // 访问趋势图
+        const visitCtx = document.getElementById('visitTrendChart');
+        if (visitCtx) {
+            new Chart(visitCtx, {
+                type: 'line',
+                data: {
+                    labels: <?= json_encode($chartDays14) ?>,
+                    datasets: [
+                        {
+                            label: 'PV',
+                            data: <?= json_encode(array_column($chartData14, 'pv')) ?>,
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        },
+                        {
+                            label: 'UV',
+                            data: <?= json_encode(array_column($chartData14, 'uv')) ?>,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: textColor }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: tickColor, font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: gridColor },
+                            ticks: { color: tickColor, font: { size: 10 } },
+                            beginAtZero: true
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        // 热门日记图
+        const diaryCtx = document.getElementById('popularDiariesChart');
+        if (diaryCtx) {
+            new Chart(diaryCtx, {
+                type: 'bar',
+                data: {
+                    labels: <?= json_encode(array_map(fn($d) => mb_strimwidth($d['title'] ?? '未命名', 0, 20, '...'), $popularDiaries)) ?>,
+                    datasets: [{
+                        label: '浏览量',
+                        data: <?= json_encode(array_map(fn($d) => $d['views'] ?? 0, $popularDiaries)) ?>,
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 4,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: tickColor, font: { size: 10 } },
+                            beginAtZero: true
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: tickColor, font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+    })();
+    </script>
 </body>
 </html>

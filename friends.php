@@ -3,7 +3,13 @@
  * 前台友情链接页面
  * 从 friends.json 读取友情链接，卡片式网格展示
  */
-$page_title = '友情链接';
+require_once __DIR__ . '/includes/security.php';
+$content = readJsonFile(__DIR__ . '/data/content.json');
+$settings = $content['settings'] ?? [];
+$lang = $settings['language'] ?? 'zh';
+$i18nData = $content['i18n'] ?? [];
+$i18n = $i18nData[$lang] ?? $i18nData['en'] ?? [];
+$page_title = $i18n['friends']['title'] ?? '友情链接';
 include __DIR__ . '/includes/header.php';
 
 $friendsFile = __DIR__ . '/data/friends.json';
@@ -15,10 +21,10 @@ usort($friends, fn($a, $b) => ($a['sort_order'] ?? 0) <=> ($b['sort_order'] ?? 0
     <div class="text-center mb-10">
         <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-pink-50 dark:bg-pink-950 text-pink-600 dark:text-pink-400 text-sm font-medium mb-4">
             <i class="fa-solid fa-link"></i>
-            <span>友情链接</span>
+            <span><?= $i18n['friends']['title'] ?? '友情链接' ?></span>
         </div>
-        <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">我的朋友们</h1>
-        <p class="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">收录了我欣赏的站点和朋友们的主页，欢迎互相交流学习。</p>
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3"><?= $i18n['friends']['my_friends'] ?? '我的朋友们' ?></h1>
+        <p class="text-gray-500 dark:text-gray-400 max-w-xl mx-auto"><?= $i18n['friends']['description'] ?? '收录了我欣赏的站点和朋友们的主页，欢迎互相交流学习。' ?></p>
     </div>
 
     <?php if (empty($friends)): ?>
@@ -26,7 +32,7 @@ usort($friends, fn($a, $b) => ($a['sort_order'] ?? 0) <=> ($b['sort_order'] ?? 0
             <div class="w-20 h-20 rounded-3xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
                 <i class="fa-solid fa-link-slash text-gray-300 dark:text-gray-600 text-2xl"></i>
             </div>
-            <p class="text-gray-400">暂无友情链接</p>
+            <p class="text-gray-400"><?= $i18n['friends']['no_friends'] ?? '暂无友情链接' ?></p>
         </div>
     <?php else: ?>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -51,7 +57,7 @@ usort($friends, fn($a, $b) => ($a['sort_order'] ?? 0) <=> ($b['sort_order'] ?? 0
                     <?php endif; ?>
                     <div class="mt-auto flex items-center gap-x-1 text-xs text-gray-400 group-hover:text-indigo-500 transition-colors">
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                        <span>访问</span>
+                        <span><?= $i18n['friends']['visit'] ?? '访问' ?></span>
                     </div>
                 </a>
             <?php endforeach; ?>

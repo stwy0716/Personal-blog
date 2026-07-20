@@ -36,9 +36,18 @@ addUrl($urls, $baseUrl . '/about.php', '0.5', $today, 'monthly');
 addUrl($urls, $baseUrl . '/diary.php', '0.8', $today, 'weekly');
 addUrl($urls, $baseUrl . '/tags.php', '0.5', $today, 'weekly');
 addUrl($urls, $baseUrl . '/search.php', '0.4', $today, 'weekly');
+addUrl($urls, $baseUrl . '/friends.php', '0.5', $today, 'weekly');
 
 if ($guestbookEnabled) {
     addUrl($urls, $baseUrl . '/guestbook.php', '0.5', $today, 'daily');
+}
+
+// 动态自定义页面
+$pages = readJsonFile(__DIR__ . '/data/pages.json');
+foreach ($pages as $page) {
+    if (!empty($page['slug'])) {
+        addUrl($urls, $baseUrl . '/' . $page['slug'] . '.php', '0.5', $today, 'weekly');
+    }
 }
 
 // 所有已发布日记

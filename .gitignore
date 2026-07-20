@@ -1,0 +1,9 @@
+data/admin.json
+data/stats.json
+data/operation_logs.json
+uploads/*
+!uploads/.htaccess
+backups/*
+!backups/.htaccess
+.DS_Store
+*.log

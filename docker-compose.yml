@@ -18,4 +18,6 @@ services:
       - ./data:/var/www/html/data
       # 挂载上传目录，保证上传的图片和文件持久化
       - ./uploads:/var/www/html/uploads
+      # 挂载备份目录，保证备份文件持久化
+      - ./backups:/var/www/html/backups
     restart: unless-stopped

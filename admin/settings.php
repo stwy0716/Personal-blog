@@ -36,6 +36,20 @@ $settings = array_merge($defaults, $settings);
 $message = '';
 $error = '';
 
+function renderToggle($name, $label, $desc, $checked) { ?>
+<div class="flex items-start justify-between gap-x-4">
+    <div class="flex-1">
+        <div class="font-medium text-sm"><?= $label ?></div>
+        <div class="text-xs text-zinc-500 mt-0.5"><?= $desc ?></div>
+    </div>
+    <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-0.5">
+        <input type="checkbox" name="<?= $name ?>" value="1" <?= $checked ? 'checked' : '' ?>
+               class="sr-only peer">
+        <div class="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+    </label>
+</div>
+<?php }
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
     verifyPostCsrf();
 
@@ -77,12 +91,12 @@ include __DIR__ . '/admin_header.php';
         <p class="text-zinc-500 mb-8">在此控制所有前台功能和界面外观。</p>
 
         <?php if ($message): ?>
-            <div class="mb-6 p-4 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center gap-x-2">
+            <div class="mb-6 p-4 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 rounded-2xl flex items-center gap-x-2">
                 <i class="fa-solid fa-check-circle"></i> <span><?= sanitizeHtml($message) ?></span>
             </div>
         <?php endif; ?>
         <?php if ($error): ?>
-            <div class="mb-6 p-4 bg-red-500/10 text-red-400 rounded-2xl flex items-center gap-x-2">
+            <div class="mb-6 p-4 bg-red-500/10 text-red-700 dark:text-red-400 rounded-2xl flex items-center gap-x-2">
                 <i class="fa-solid fa-exclamation-circle"></i> <span><?= sanitizeHtml($error) ?></span>
             </div>
         <?php endif; ?>
@@ -91,25 +105,11 @@ include __DIR__ . '/admin_header.php';
             <?= csrfField() ?>
 
             <!-- UI Appearance -->
-            <div class="rounded-2xl border border-zinc-800 p-7">
+            <div class="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-7">
                 <h3 class="font-semibold text-lg mb-6 flex items-center gap-x-2">
                     <i class="fa-solid fa-palette text-pink-400"></i> 界面外观
                 </h3>
                 <div class="space-y-5">
-                    <?php function renderToggle($name, $label, $desc, $checked) { ?>
-                    <div class="flex items-start justify-between gap-x-4">
-                        <div class="flex-1">
-                            <div class="font-medium text-sm"><?= $label ?></div>
-                            <div class="text-xs text-zinc-500 mt-0.5"><?= $desc ?></div>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-0.5">
-                            <input type="checkbox" name="<?= $name ?>" value="1" <?= $checked ? 'checked' : '' ?>
-                                   class="sr-only peer">
-                            <div class="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                        </label>
-                    </div>
-                    <?php } ?>
-
                     <?php renderToggle('glassmorphism_enabled', '毛玻璃效果', '在卡片、评论和容器上启用磨砂玻璃效果', $settings['glassmorphism_enabled']); ?>
 
                     <?php if ($settings['glassmorphism_enabled']): ?>
@@ -134,7 +134,7 @@ include __DIR__ . '/admin_header.php';
             </div>
 
             <!-- Theme Color -->
-            <div class="rounded-2xl border border-zinc-800 p-7">
+            <div class="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-7">
                 <h3 class="font-semibold text-lg mb-6 flex items-center gap-x-2">
                     <i class="fa-solid fa-paintbrush text-rose-400"></i> 主题色
                 </h3>
@@ -160,7 +160,7 @@ include __DIR__ . '/admin_header.php';
             </div>
 
             <!-- Language -->
-            <div class="rounded-2xl border border-zinc-800 p-7">
+            <div class="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-7">
                 <h3 class="font-semibold text-lg mb-6 flex items-center gap-x-2">
                     <i class="fa-solid fa-language text-cyan-400"></i> 语言
                 </h3>
@@ -177,7 +177,7 @@ include __DIR__ . '/admin_header.php';
             </div>
 
             <!-- Feature Controls -->
-            <div class="rounded-2xl border border-zinc-800 p-7">
+            <div class="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-7">
                 <h3 class="font-semibold text-lg mb-6 flex items-center gap-x-2">
                     <i class="fa-solid fa-sliders text-indigo-400"></i> 功能控制
                 </h3>
@@ -191,7 +191,7 @@ include __DIR__ . '/admin_header.php';
             </div>
 
             <!-- Interactive Features -->
-            <div class="rounded-2xl border border-zinc-800 p-7">
+            <div class="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-7">
                 <h3 class="font-semibold text-lg mb-6 flex items-center gap-x-2">
                     <i class="fa-solid fa-comments text-emerald-400"></i> 互动功能
                 </h3>

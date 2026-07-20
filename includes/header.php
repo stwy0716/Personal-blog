@@ -31,7 +31,7 @@ $footerMusicPlayer = !empty($settings['footer_music_player']);
 $musicAutoplay = !empty($settings['music_autoplay']);
 
 // 多语言与主题色
-$lang = $settings['language'] ?? 'en';
+$lang = $settings['language'] ?? 'zh';
 $i18nData = $content['i18n'] ?? [];
 $i18n = $i18nData[$lang] ?? $i18nData['en'] ?? [];
 $navTexts = $i18n['nav'] ?? $content['nav'] ?? ['home'=>'首页','about'=>'关于','diary'=>'日记','guestbook'=>'留言板'];
@@ -87,6 +87,17 @@ $jsonLd = [
     <meta property="og:site_name" content="<?= sanitizeHtml($site_title) ?>">
     <?php endif; ?>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -250,6 +261,8 @@ $jsonLd = [
                     <a href="index.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'nav-active' : 'text-gray-600 dark:text-gray-300' ?>"><?= sanitizeHtml($navTexts['home'] ?? '首页') ?></a>
                     <a href="about.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'about.php' ? 'nav-active' : 'text-gray-600 dark:text-gray-300' ?>"><?= sanitizeHtml($navTexts['about'] ?? '关于') ?></a>
                     <a href="diary.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'diary.php' || basename($_SERVER['PHP_SELF']) === 'diary-detail.php' ? 'nav-active' : 'text-gray-600 dark:text-gray-300' ?>"><?= sanitizeHtml($navTexts['diary'] ?? '日记') ?></a>
+                    <a href="archive.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'archive.php' ? 'nav-active' : 'text-gray-600 dark:text-gray-300' ?>"><?= sanitizeHtml($navTexts['archive'] ?? '归档') ?></a>
+                    <a href="hot.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'hot.php' ? 'nav-active' : 'text-gray-600 dark:text-gray-300' ?>"><?= sanitizeHtml($navTexts['hot'] ?? '热门') ?></a>
                     <a href="guestbook.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'guestbook.php' ? 'nav-active' : 'text-gray-600 dark:text-gray-300' ?>"><?= sanitizeHtml($navTexts['guestbook'] ?? '留言板') ?></a>
                     <a href="friends.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'friends.php' ? 'nav-active' : 'text-gray-600 dark:text-gray-300' ?>">友情链接</a>
                 </div>
@@ -275,6 +288,8 @@ $jsonLd = [
                 <a href="index.php" class="py-2.5 px-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'text-' . sanitizeHtml($theme['tw']) . '-600 font-semibold' : '' ?>"><?= sanitizeHtml($navTexts['home'] ?? '首页') ?></a>
                 <a href="about.php" class="py-2.5 px-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 <?= basename($_SERVER['PHP_SELF']) === 'about.php' ? 'text-' . sanitizeHtml($theme['tw']) . '-600 font-semibold' : '' ?>"><?= sanitizeHtml($navTexts['about'] ?? '关于') ?></a>
                 <a href="diary.php" class="py-2.5 px-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 <?= basename($_SERVER['PHP_SELF']) === 'diary.php' ? 'text-' . sanitizeHtml($theme['tw']) . '-600 font-semibold' : '' ?>"><?= sanitizeHtml($navTexts['diary'] ?? '日记') ?></a>
+                <a href="archive.php" class="py-2.5 px-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 <?= basename($_SERVER['PHP_SELF']) === 'archive.php' ? 'text-' . sanitizeHtml($theme['tw']) . '-600 font-semibold' : '' ?>"><?= sanitizeHtml($navTexts['archive'] ?? '归档') ?></a>
+                <a href="hot.php" class="py-2.5 px-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 <?= basename($_SERVER['PHP_SELF']) === 'hot.php' ? 'text-' . sanitizeHtml($theme['tw']) . '-600 font-semibold' : '' ?>"><?= sanitizeHtml($navTexts['hot'] ?? '热门') ?></a>
                 <a href="guestbook.php" class="py-2.5 px-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 <?= basename($_SERVER['PHP_SELF']) === 'guestbook.php' ? 'text-' . sanitizeHtml($theme['tw']) . '-600 font-semibold' : '' ?>"><?= sanitizeHtml($navTexts['guestbook'] ?? '留言板') ?></a>
                 <a href="friends.php" class="py-2.5 px-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 <?= basename($_SERVER['PHP_SELF']) === 'friends.php' ? 'text-' . sanitizeHtml($theme['tw']) . '-600 font-semibold' : '' ?>">友情链接</a>
                 <?php if (!empty($_SESSION['admin_logged_in'])): ?>
@@ -332,13 +347,6 @@ $jsonLd = [
                 });
             }
             
-            // Back to top visibility
-            const backBtn = document.getElementById('back-to-top');
-            if (backBtn) {
-                window.addEventListener('scroll', () => {
-                    backBtn.style.display = window.scrollY > 300 ? 'flex' : 'none';
-                });
-            }
         }
         
         if (document.readyState === 'loading') {

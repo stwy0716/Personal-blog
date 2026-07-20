@@ -1,0 +1,10 @@
+.git/
+.gitignore
+README.md
+README_EN.md
+test_security.php
+backups/
+data/admin.json
+data/stats.json
+data/operation_logs.json
+.DS_Store

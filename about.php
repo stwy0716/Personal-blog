@@ -1,5 +1,11 @@
 <?php
-$page_title = '关于我';
+require_once __DIR__ . '/includes/security.php';
+$content = readJsonFile(__DIR__ . '/data/content.json');
+$settings = $content['settings'] ?? [];
+$lang = $settings['language'] ?? 'zh';
+$i18nData = $content['i18n'] ?? [];
+$i18n = $i18nData[$lang] ?? $i18nData['en'] ?? [];
+$page_title = $i18n['about']['about_title'] ?? '关于我';
 include __DIR__ . '/includes/header.php';
 
 $about = $content['about'] ?? ['intro' => '', 'timeline' => []];
@@ -41,7 +47,7 @@ $text = function(string $key, string $fallback) use ($pageI18n): string {
                     <?php foreach ($about['timeline'] as $item): ?>
                         <div class="timeline-item flex gap-x-6">
                             <div class="flex-shrink-0 w-9 h-9 mt-1 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-sm font-bold shadow-inner">
-                                <?= htmlspecialchars(substr($item['year'] ?? '20', 2)) ?>
+                                <?= htmlspecialchars(mb_substr($item['year'] ?? '20', 2)) ?>
                             </div>
                             <div class="flex-1 pt-1">
                                 <div class="font-semibold text-xl tracking-tight mb-1.5"><?= htmlspecialchars($item['title'] ?? '') ?></div>
@@ -52,7 +58,7 @@ $text = function(string $key, string $fallback) use ($pageI18n): string {
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <p class="text-gray-500"><?= sanitizeHtml($text('no_timeline', '暂无时间线数据，请在后台添加。')) ?></p>
+                    <p class="text-gray-500 dark:text-gray-400"><?= sanitizeHtml($text('no_timeline', '暂无时间线数据，请在后台添加。')) ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -90,7 +96,7 @@ $text = function(string $key, string $fallback) use ($pageI18n): string {
                         <i class="fa-solid fa-envelope text-red-500"></i>
                     </div>
                     <div class="min-w-0">
-                        <div class="text-xs text-gray-500"><?= sanitizeHtml($text('email_label', '邮箱')) ?></div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400"><?= sanitizeHtml($text('email_label', '邮箱')) ?></div>
                         <div class="font-medium truncate group-hover:text-indigo-600"><?= htmlspecialchars($contact['email']) ?></div>
                     </div>
                 </a>
@@ -102,7 +108,7 @@ $text = function(string $key, string $fallback) use ($pageI18n): string {
                         <i class="fa-brands fa-weixin text-green-600"></i>
                     </div>
                     <div class="min-w-0">
-                        <div class="text-xs text-gray-500"><?= sanitizeHtml($text('wechat_label', '微信')) ?></div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400"><?= sanitizeHtml($text('wechat_label', '微信')) ?></div>
                         <div class="font-medium"><?= htmlspecialchars($contact['wechat']) ?></div>
                     </div>
                 </div>
@@ -114,7 +120,7 @@ $text = function(string $key, string $fallback) use ($pageI18n): string {
                         <i class="fa-brands fa-github text-white"></i>
                     </div>
                     <div class="min-w-0">
-                        <div class="text-xs text-gray-500"><?= sanitizeHtml($text('github_label', 'GitHub')) ?></div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400"><?= sanitizeHtml($text('github_label', 'GitHub')) ?></div>
                         <div class="font-medium truncate group-hover:text-indigo-600"><?= sanitizeHtml($text('view_projects', '查看项目')) ?></div>
                     </div>
                 </a>

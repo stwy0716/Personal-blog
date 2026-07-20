@@ -9,6 +9,9 @@ handleAdminAuth();
 
 $pagesFile = __DIR__ . '/../data/pages.json';
 
+$message = '';
+$error = '';
+
 // 获取最大ID
 function getMaxPageId($pages) {
     $maxId = 0;
@@ -54,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
                     if ((int)$p['id'] === $editId) {
                         $p['title'] = $title;
                         $p['slug'] = $slug;
-                        $p['content'] = $content;
+                        $p['content'] = sanitizeRichText($content);
                         $p['sort_order'] = $sort_order;
                         break;
                     }
@@ -68,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
                     'id' => $newId,
                     'title' => $title,
                     'slug' => $slug,
-                    'content' => $content,
+                    'content' => sanitizeRichText($content),
                     'sort_order' => $sort_order,
                 ];
                 logOperation('page_add', '添加了页面：' . $title);
@@ -125,12 +128,12 @@ include __DIR__ . '/admin_header.php';
         </div>
 
         <?php if (!empty($message)): ?>
-            <div class="mb-6 p-4 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center gap-x-2">
+            <div class="mb-6 p-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center gap-x-2">
                 <i class="fa-solid fa-check-circle"></i> <span><?= sanitizeHtml($message) ?></span>
             </div>
         <?php endif; ?>
         <?php if (!empty($error)): ?>
-            <div class="mb-6 p-4 bg-red-500/10 text-red-400 rounded-2xl flex items-center gap-x-2">
+            <div class="mb-6 p-4 bg-red-500/10 text-red-600 dark:text-red-400 rounded-2xl flex items-center gap-x-2">
                 <i class="fa-solid fa-exclamation-circle"></i> <span><?= sanitizeHtml($error) ?></span>
             </div>
         <?php endif; ?>
@@ -153,26 +156,26 @@ include __DIR__ . '/admin_header.php';
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="text-sm font-medium text-zinc-300 block mb-1.5">页面标题 *</label>
+                        <label class="text-sm font-medium text-gray-700 dark:text-zinc-300 block mb-1.5">页面标题 *</label>
                         <input type="text" name="title" value="<?= sanitizeHtml($editPage['title'] ?? '') ?>" required
-                               class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="页面标题">
+                               class="w-full px-4 py-2.5 bg-white dark:bg-transparent border border-gray-300 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="页面标题">
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-zinc-300 block mb-1.5">URL标识（slug）</label>
+                        <label class="text-sm font-medium text-gray-700 dark:text-zinc-300 block mb-1.5">URL标识（slug）</label>
                         <input type="text" name="slug" value="<?= sanitizeHtml($editPage['slug'] ?? '') ?>"
-                               class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="about-us">
-                        <p class="text-xs text-zinc-500 mt-1">仅允许字母、数字、连字符和下划线。留空将自动生成。</p>
+                               class="w-full px-4 py-2.5 bg-white dark:bg-transparent border border-gray-300 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="about-us">
+                        <p class="text-xs text-gray-500 dark:text-zinc-500 mt-1">仅允许字母、数字、连字符和下划线。留空将自动生成。</p>
                     </div>
                 </div>
                 <div>
-                    <label class="text-sm font-medium text-zinc-300 block mb-1.5">页面内容（支持HTML）</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-zinc-300 block mb-1.5">页面内容（支持HTML）</label>
                     <textarea name="page_content" rows="10"
-                              class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono" placeholder="在此输入页面内容，支持HTML标签..."><?= sanitizeHtml($editPage['content'] ?? '') ?></textarea>
+                              class="w-full px-4 py-2.5 bg-white dark:bg-transparent border border-gray-300 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono" placeholder="在此输入页面内容，支持HTML标签..."><?= htmlspecialchars($editPage['content'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
                 </div>
                 <div>
-                    <label class="text-sm font-medium text-zinc-300 block mb-1.5">排序（越小越靠前）</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-zinc-300 block mb-1.5">排序（越小越靠前）</label>
                     <input type="number" name="sort_order" value="<?= (int)($editPage['sort_order'] ?? 0) ?>" min="0"
-                           class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent max-w-[200px]">
+                           class="w-full px-4 py-2.5 bg-white dark:bg-transparent border border-gray-300 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent max-w-[200px]">
                 </div>
 
                 <div class="flex items-center gap-x-3">
@@ -180,7 +183,7 @@ include __DIR__ . '/admin_header.php';
                         <i class="fa-solid fa-save"></i> 保存
                     </button>
                     <?php if ($editPage): ?>
-                        <a href="pages.php" class="px-4 py-2.5 text-sm text-zinc-400 hover:text-zinc-300 transition-colors">取消编辑</a>
+                        <a href="pages.php" class="px-4 py-2.5 text-sm text-gray-500 dark:text-zinc-400 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors">取消编辑</a>
                     <?php endif; ?>
                 </div>
             </form>
@@ -190,7 +193,7 @@ include __DIR__ . '/admin_header.php';
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-7">
             <h3 class="font-semibold text-lg mb-5">所有页面（<?= count($pages) ?>）</h3>
             <?php if (empty($pages)): ?>
-                <p class="text-zinc-400">暂无自定义页面。</p>
+                <p class="text-gray-500 dark:text-zinc-400">暂无自定义页面。</p>
             <?php else: ?>
                 <div class="space-y-3">
                     <?php foreach ($pages as $p): ?>
@@ -198,27 +201,27 @@ include __DIR__ . '/admin_header.php';
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-x-2">
                                     <span class="font-medium text-sm"><?= sanitizeHtml($p['title']) ?></span>
-                                    <span class="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md">
+                                    <span class="text-xs text-gray-500 dark:text-zinc-500 bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md">
                                         /page.php?slug=<?= sanitizeHtml($p['slug']) ?>
                                     </span>
                                 </div>
                                 <?php if (!empty($p['content'])): ?>
-                                    <div class="text-xs text-zinc-500 mt-0.5 truncate"><?= mb_substr(strip_tags($p['content']), 0, 80) ?></div>
+                                    <div class="text-xs text-gray-500 dark:text-zinc-500 mt-0.5 truncate"><?= mb_substr(strip_tags($p['content']), 0, 80) ?></div>
                                 <?php else: ?>
-                                    <div class="text-xs text-zinc-600 mt-0.5">无内容</div>
+                                    <div class="text-xs text-gray-500 dark:text-zinc-600 mt-0.5">无内容</div>
                                 <?php endif; ?>
                             </div>
                             <div class="flex items-center gap-x-2 flex-shrink-0">
-                                <a href="../page.php?slug=<?= urlencode($p['slug']) ?>" target="_blank" class="px-3 py-1.5 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-950/50 rounded-lg transition-colors" title="查看页面">
+                                <a href="../page.php?slug=<?= urlencode($p['slug']) ?>" target="_blank" class="px-3 py-1.5 text-xs text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 dark:hover:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 rounded-lg transition-colors" title="查看页面">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="?edit=<?= (int)$p['id'] ?>" class="px-3 py-1.5 text-xs text-indigo-400 hover:text-indigo-300 bg-indigo-950/50 rounded-lg transition-colors">
+                                <a href="?edit=<?= (int)$p['id'] ?>" class="px-3 py-1.5 text-xs text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 rounded-lg transition-colors">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
                                 <form method="POST" class="inline" onsubmit="return confirm('确认删除此页面？')">
                                     <?= csrfField() ?>
                                     <input type="hidden" name="delete_id" value="<?= (int)$p['id'] ?>">
-                                    <button type="submit" class="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 bg-red-950/50 rounded-lg transition-colors">
+                                    <button type="submit" class="px-3 py-1.5 text-xs text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 bg-red-50 dark:bg-red-950/50 rounded-lg transition-colors">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>

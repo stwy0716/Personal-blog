@@ -4,19 +4,27 @@
  * 通过 GET 参数 slug 加载对应页面
  * 支持自定义模板 page-{slug}.php，否则使用通用模板
  */
+require_once __DIR__ . '/includes/security.php';
+
+// i18n
+$contentData = readJsonFile(__DIR__ . '/data/content.json');
+$settings = $contentData['settings'] ?? [];
+$lang = $settings['language'] ?? 'zh';
+$i18nPage = $contentData['i18n'][$lang]['page'] ?? $contentData['i18n']['en']['page'] ?? [];
+
 $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 
 // 如果slug为空，显示404
 if (empty($slug)) {
     http_response_code(404);
-    $page_title = '页面未找到';
+    $page_title = $i18nPage['not_found_title'] ?? '页面未找到';
     include __DIR__ . '/includes/header.php';
     echo '<div class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
         <div class="w-20 h-20 rounded-3xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
             <i class="fa-solid fa-file-circle-question text-gray-300 dark:text-gray-600 text-2xl"></i>
         </div>
-        <h1 class="text-2xl font-bold mb-2">页面未找到</h1>
-        <p class="text-gray-500">请提供有效的页面标识。</p>
+        <h1 class="text-2xl font-bold mb-2">' . sanitizeHtml($i18nPage['not_found_title'] ?? '页面未找到') . '</h1>
+        <p class="text-gray-500 dark:text-gray-400">' . sanitizeHtml($i18nPage['not_found_desc'] ?? '请提供有效的页面标识。') . '</p>
     </div>';
     include __DIR__ . '/includes/footer.php';
     exit;
@@ -36,14 +44,14 @@ foreach ($pages as $p) {
 
 if (!$pageData) {
     http_response_code(404);
-    $page_title = '页面未找到';
+    $page_title = $i18nPage['not_found_title'] ?? '页面未找到';
     include __DIR__ . '/includes/header.php';
     echo '<div class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
         <div class="w-20 h-20 rounded-3xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
             <i class="fa-solid fa-file-circle-question text-gray-300 dark:text-gray-600 text-2xl"></i>
         </div>
-        <h1 class="text-2xl font-bold mb-2">页面未找到</h1>
-        <p class="text-gray-500">找不到标识为 "' . sanitizeHtml($slug) . '" 的页面。</p>
+        <h1 class="text-2xl font-bold mb-2">' . sanitizeHtml($i18nPage['not_found_title'] ?? '页面未找到') . '</h1>
+        <p class="text-gray-500 dark:text-gray-400">' . sanitizeHtml($i18nPage['not_found_detail'] ?? '找不到标识为 "' . $slug . '" 的页面。') . '</p>
     </div>';
     include __DIR__ . '/includes/footer.php';
     exit;
@@ -53,6 +61,11 @@ $page_title = $pageData['title'];
 
 // 检查是否有自定义模板
 $customTemplate = __DIR__ . '/page-' . $slug . '.php';
+
+// 防止路径遍历：验证 slug 只包含安全字符
+if (!preg_match('/^[a-z0-9_-]+$/i', $slug)) {
+    $customTemplate = '';
+}
 
 include __DIR__ . '/includes/header.php';
 
@@ -69,10 +82,10 @@ if (file_exists($customTemplate)) {
         <div class="glass-card rounded-3xl p-8 md:p-10">
             <?php if (!empty($pageData['content'])): ?>
                 <div class="prose prose-gray dark:prose-invert max-w-none">
-                    <?= $pageData['content'] ?>
+                    <?= sanitizeRichText($pageData['content']) ?>
                 </div>
             <?php else: ?>
-                <p class="text-gray-400 text-center py-10">此页面暂无内容。</p>
+                <p class="text-gray-400 text-center py-10"><?= sanitizeHtml($i18nPage['no_content'] ?? '此页面暂无内容。') ?></p>
             <?php endif; ?>
         </div>
     </div>

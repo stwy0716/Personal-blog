@@ -100,7 +100,7 @@ function getExcerpt(string $content, string $keyword, int $length = 160): string
                 <input type="text" name="q"
                        value="<?= sanitizeHtml($query) ?>"
                        class="w-full pl-12 pr-24 py-4 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:border-indigo-400 transition text-base"
-                       placeholder="<?= $i18n['index']['search'] ?? '搜索' ?>标题、内容或标签...">
+                       placeholder="<?= $i18n['search']['placeholder'] ?? '标题、内容或标签...' ?>">
                 <i class="fa-solid fa-search absolute left-4 top-4.5 text-gray-400 text-lg"></i>
                 <button type="submit"
                         class="absolute right-2 top-2 px-5 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors">
@@ -111,7 +111,7 @@ function getExcerpt(string $content, string $keyword, int $length = 160): string
 
         <?php if ($tag !== ''): ?>
             <div class="mt-4 flex items-center gap-x-2">
-                <span class="text-sm text-gray-500 dark:text-gray-400">按标签筛选：</span>
+                <span class="text-sm text-gray-500 dark:text-gray-400"><?= $i18n['search']['filter_by_tag'] ?? '按标签筛选：' ?></span>
                 <span class="inline-flex items-center gap-x-1 px-3 py-1 rounded-xl bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-sm font-medium">
                     <?= sanitizeHtml($tag) ?>
                     <a href="search.php" class="hover:text-indigo-900 dark:hover:text-indigo-100 ml-1">
@@ -125,17 +125,17 @@ function getExcerpt(string $content, string $keyword, int $length = 160): string
     <?php if ($query === '' && $tag === ''): ?>
         <div class="text-center py-16 text-gray-400">
             <i class="fa-solid fa-magnifying-glass text-5xl mb-4 opacity-40"></i>
-            <p>输入关键词或选择标签开始搜索。</p>
+            <p><?= $i18n['search']['start_typing'] ?? '输入关键词或选择标签开始搜索。' ?></p>
         </div>
     <?php elseif (empty($results)): ?>
         <div class="text-center py-16 text-gray-400">
             <i class="fa-solid fa-circle-xmark text-5xl mb-4 opacity-40"></i>
-            <p class="text-lg mb-2">未找到相关结果</p>
-            <p class="text-sm">尝试其他关键词或浏览所有<a href="tags.php" class="text-indigo-500 hover:underline"><?= $i18n['diary']['tags'] ?? '标签' ?></a>。</p>
+            <p class="text-lg mb-2"><?= $i18n['search']['no_results'] ?? '未找到相关结果' ?></p>
+            <p class="text-sm"><?= $i18n['search']['try_other_keywords'] ?? '尝试其他关键词或浏览所有' ?><a href="tags.php" class="text-indigo-500 hover:underline"><?= $i18n['diary']['tags'] ?? '标签' ?></a>。</p>
         </div>
     <?php else: ?>
         <div class="mb-4 text-sm text-gray-500 dark:text-gray-400">
-            找到 <?= count($results) ?> 个结果
+            <?= sprintf($i18n['search']['results_found'] ?? '找到 %d 个结果', count($results)) ?>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -155,7 +155,7 @@ function getExcerpt(string $content, string $keyword, int $length = 160): string
                         <?php if (!empty($diary['tags'])): ?>
                             <div class="flex gap-x-1.5">
                                 <?php foreach (array_slice($diary['tags'], 0, 2) as $t): ?>
-                                    <span class="text-[10px] px-2.5 py-px rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-500"><?= sanitizeHtml($t) ?></span>
+                                    <span class="text-[10px] px-2.5 py-px rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"><?= sanitizeHtml($t) ?></span>
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
@@ -183,7 +183,7 @@ function getExcerpt(string $content, string $keyword, int $length = 160): string
     <?php endif; ?>
 
     <div class="mt-10 flex justify-center">
-        <a href="diary.php" class="inline-flex items-center text-sm px-5 py-2.5 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 transition-colors">
+        <a href="diary.php" class="inline-flex items-center text-sm px-5 py-2.5 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors">
             <i class="fa-solid fa-arrow-left mr-2"></i>
             <span><?= $i18n['diary']['back_to_list'] ?? '返回日记' ?></span>
         </a>

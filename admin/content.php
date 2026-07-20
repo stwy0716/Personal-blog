@@ -8,12 +8,13 @@ $content = readJsonFile($contentFile);
 $success = $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
+    verifyPostCsrf();
     $newContent = [
         'site' => [
-            'title' => trim($_POST['site_title'] ?? 'My Personal Space'),
-            'subtitle' => trim($_POST['site_subtitle'] ?? ''),
+            'title' => trim($_POST['site_title'] ?? '我的个人空间'),
+            'subtitle' => trim($_POST['site_subtitle'] ?? '开发者 / 创作者 / 探索者'),
             'avatar' => trim($_POST['site_avatar'] ?? $content['site']['avatar'] ?? ''),
-            'title_prefix' => trim($_POST['site_prefix'] ?? 'Hi, I\'m')
+            'title_prefix' => trim($_POST['site_prefix'] ?? '你好，我是')
         ],
         'blog_intro' => trim($_POST['blog_intro'] ?? ''),
         'about' => [
@@ -29,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
             'bilibili' => trim($_POST['contact_bilibili'] ?? '')
         ],
         'homepage' => [
-            'explore_title' => trim($_POST['explore_title'] ?? 'Explore My World'),
-            'card_about_title' => trim($_POST['card_about_title'] ?? 'About Me'),
+            'explore_title' => trim($_POST['explore_title'] ?? '探索我的世界'),
+            'card_about_title' => trim($_POST['card_about_title'] ?? '关于我'),
             'card_about_desc' => trim($_POST['card_about_desc'] ?? ''),
-            'card_diary_title' => trim($_POST['card_diary_title'] ?? 'Journal'),
+            'card_diary_title' => trim($_POST['card_diary_title'] ?? '日记'),
             'card_diary_desc' => trim($_POST['card_diary_desc'] ?? ''),
-            'card_guestbook_title' => trim($_POST['card_guestbook_title'] ?? 'Guestbook'),
+            'card_guestbook_title' => trim($_POST['card_guestbook_title'] ?? '留言板'),
             'card_guestbook_desc' => trim($_POST['card_guestbook_desc'] ?? '')
         ],
         'footer' => [
@@ -54,7 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
         ],
         'nav' => $content['nav'] ?? []
     ];
-    
+
+    $newContent['i18n'] = $content['i18n'] ?? [];
+    $newContent['settings'] = $content['settings'] ?? [];
+
     // Parse timeline
     $timelineRaw = trim($_POST['timeline_raw'] ?? '');
     if ($timelineRaw) {
@@ -160,7 +164,7 @@ include __DIR__ . '/admin_header.php';
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div class="md:col-span-2"><label class="text-xs font-medium text-zinc-500 block mb-1.5">探索区块标题</label>
-                    <input type="text" name="explore_title" value="<?= htmlspecialchars($homepage['explore_title'] ?? 'Explore My World') ?>" class="w-full px-4 h-11 rounded-xl border border-zinc-200 dark:border-zinc-600 bg-transparent"></div>
+                    <input type="text" name="explore_title" value="<?= htmlspecialchars($homepage['explore_title'] ?? '探索我的世界') ?>" class="w-full px-4 h-11 rounded-xl border border-zinc-200 dark:border-zinc-600 bg-transparent"></div>
                     <div><label class="text-xs font-medium text-zinc-500 block mb-1.5">关于卡片标题</label>
                     <input type="text" name="card_about_title" value="<?= htmlspecialchars($homepage['card_about_title'] ?? '') ?>" class="w-full px-4 h-11 rounded-xl border border-zinc-200 dark:border-zinc-600 bg-transparent"></div>
                     <div><label class="text-xs font-medium text-zinc-500 block mb-1.5">关于卡片描述</label>

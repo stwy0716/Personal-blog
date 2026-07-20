@@ -9,6 +9,8 @@ $i18nData = $content['i18n'] ?? [];
 $i18n = $i18nData[$lang] ?? $i18nData['en'] ?? [];
 $gbI18n = $i18n['guestbook'] ?? [];
 $page_title = $gbI18n['title'] ?? '留言板';
+// 自己计算留言板开关状态，避免依赖 header.php 的变量作用域
+$guestbookEnabled = !empty($settings['guestbook_enabled']);
 include __DIR__ . '/includes/header.php';
 
 $guestbookFile = __DIR__ . '/data/guestbook.json';
@@ -23,7 +25,7 @@ if (!$guestbookEnabled) {
     $closedTitle = $gbI18n['closed_title'] ?? '留言板已关闭';
     $closedDesc = $gbI18n['closed_desc'] ?? '留言板功能已被管理员关闭。';
     $backHome = $gbI18n['back_home'] ?? '返回首页';
-    echo '<div class="max-w-3xl mx-auto px-6 py-20 text-center"><h1 class="text-4xl font-bold tracking-tighter">' . sanitizeHtml($closedTitle) . '</h1><p class="mt-4 text-gray-500">' . sanitizeHtml($closedDesc) . '</p><a href="index.php" class="mt-6 inline-block px-6 py-2 text-sm bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700">' . sanitizeHtml($backHome) . '</a></div>';
+    echo '<div class="max-w-3xl mx-auto px-6 py-20 text-center"><h1 class="text-4xl font-bold tracking-tighter">' . sanitizeHtml($closedTitle) . '</h1><p class="mt-4 text-gray-500 dark:text-gray-400">' . sanitizeHtml($closedDesc) . '</p><a href="index.php" class="mt-6 inline-block px-6 py-2 text-sm bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700">' . sanitizeHtml($backHome) . '</a></div>';
     include __DIR__ . '/includes/footer.php';
     exit;
 }
@@ -36,7 +38,7 @@ usort($messages, fn($a, $b) => strcmp($b['timestamp'], $a['timestamp']));
     <div class="text-center mb-10">
         <div class="inline-flex px-4 py-1 rounded-3xl bg-violet-100 dark:bg-violet-900 text-violet-600 dark:text-violet-300 text-xs font-semibold tracking-widest mb-3"><?= sanitizeHtml($gbI18n['label'] ?? '留言板') ?></div>
         <h1 class="text-5xl font-bold tracking-tighter"><?= sanitizeHtml($gbI18n['title'] ?? '留言板') ?></h1>
-        <p class="mt-2 text-gray-500"><?= sanitizeHtml($gbI18n['subtitle'] ?? '留下你的想法、建议或问候') ?></p>
+        <p class="mt-2 text-gray-500 dark:text-gray-400"><?= sanitizeHtml($gbI18n['subtitle'] ?? '留下你的想法、建议或问候') ?></p>
     </div>
     
     <!-- Post Form -->
@@ -49,13 +51,13 @@ usort($messages, fn($a, $b) => strcmp($b['timestamp'], $a['timestamp']));
         <form id="comment-form" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="text-xs font-medium text-gray-500 block mb-1.5"><?= sanitizeHtml($gbI18n['your_name'] ?? '你的名字') ?></label>
+                    <label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1.5"><?= sanitizeHtml($gbI18n['your_name'] ?? '你的名字') ?></label>
                     <input type="text" id="comment-name" required 
                            class="w-full px-4 h-11 rounded-2xl border border-gray-200 dark:border-gray-600 bg-transparent focus:border-violet-400 outline-none text-sm"
                            placeholder="<?= sanitizeHtml($gbI18n['placeholder_name'] ?? '你的名字') ?>" value="<?= sanitizeHtml($savedName) ?>">
                 </div>
                 <div class="md:col-span-2">
-                    <label class="text-xs font-medium text-gray-500 block mb-1.5"><?= sanitizeHtml($gbI18n['message'] ?? '留言内容') ?></label>
+                    <label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1.5"><?= sanitizeHtml($gbI18n['message'] ?? '留言内容') ?></label>
                     <textarea id="comment-content" required rows="3"
                               class="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-transparent focus:border-violet-400 outline-none resize-y text-sm"
                               placeholder="<?= sanitizeHtml($gbI18n['placeholder_message'] ?? '写下你想说的话...') ?>"></textarea>
@@ -86,13 +88,13 @@ usort($messages, fn($a, $b) => strcmp($b['timestamp'], $a['timestamp']));
                         <div class="flex items-center gap-x-4">
                             <!-- Like button -->
                             <button onclick="likeComment(<?= (int)$msg['id'] ?>, this)"
-                                    class="flex items-center gap-x-1.5 text-sm text-gray-500 hover:text-red-500 transition-colors">
+                                    class="flex items-center gap-x-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors">
                                 <i class="fa-solid fa-heart"></i>
                                 <span class="like-count"><?= (int)($msg['likes'] ?? 0) ?></span>
                             </button>
                             
                             <button onclick="showReplyForm(<?= (int)$msg['id'] ?>, this)"
-                                    class="flex items-center gap-x-1.5 text-sm text-gray-500 hover:text-violet-500 transition-colors">
+                                    class="flex items-center gap-x-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-violet-500 transition-colors">
                                 <i class="fa-solid fa-reply"></i>
                                 <span><?= sanitizeHtml($gbI18n['reply'] ?? '回复') ?></span>
                             </button>
@@ -139,6 +141,7 @@ usort($messages, fn($a, $b) => strcmp($b['timestamp'], $a['timestamp']));
 
 <script>
 const gbI18n = <?= json_encode($gbI18n) ?>;
+const gbCsrfToken = '<?= generateCsrfToken() ?>';
 
 // Handle new comment submission
 document.getElementById('comment-form').addEventListener('submit', async function(e) {
@@ -157,7 +160,10 @@ document.getElementById('comment-form').addEventListener('submit', async functio
     try {
         const res = await fetch('api/post_comment.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': gbCsrfToken
+            },
             body: JSON.stringify({ name, content })
         });
         
@@ -180,7 +186,10 @@ async function likeComment(id, btnEl) {
     try {
         const res = await fetch('api/like_comment.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': gbCsrfToken
+            },
             body: JSON.stringify({ id })
         });
         const data = await res.json();
@@ -229,7 +238,10 @@ async function submitReply(parentId) {
     try {
         const res = await fetch('api/reply_comment.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': gbCsrfToken
+            },
             body: JSON.stringify({ parent_id: parentId, name, content })
         });
         

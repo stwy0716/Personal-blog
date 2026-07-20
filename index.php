@@ -19,6 +19,19 @@ $pageI18n = $i18n['index'] ?? ($content['i18n']['en']['index'] ?? []);
 $text = function(string $key, string $fallback) use ($pageI18n): string {
     return $pageI18n[$key] ?? $fallback;
 };
+
+// 加载热门文章（按阅读量 top 5）
+$diaries = readJsonFile(__DIR__ . '/data/diaries.json');
+$publishedDiaries = array_filter($diaries, fn($d) => empty($d['status']) || $d['status'] !== 'draft');
+usort($publishedDiaries, fn($a, $b) => ($b['views'] ?? 0) <=> ($a['views'] ?? 0));
+$hotDiaries = array_slice($publishedDiaries, 0, 5);
+
+function formatViews(int $views): string {
+    if ($views >= 1000) {
+        return round($views / 1000, 1) . 'k';
+    }
+    return (string) $views;
+}
 ?>
 
 <div class="max-w-5xl mx-auto px-6 pt-12 pb-16">
@@ -153,13 +166,13 @@ $text = function(string $key, string $fallback) use ($pageI18n): string {
                     <i class="fa-solid fa-link text-pink-600 dark:text-pink-400 text-2xl"></i>
                 </div>
                 <h3 class="font-semibold text-2xl tracking-tight mb-2">
-                    友情链接
+                    <?= sanitizeHtml($i18n['friends']['title'] ?? '友情链接') ?>
                 </h3>
                 <p class="text-gray-600 dark:text-gray-400 text-[15px] flex-1">
-                    我欣赏的站点和朋友们的主页，互相交流学习。
+                    <?= sanitizeHtml($i18n['friends']['description'] ?? '我欣赏的站点和朋友们的主页，互相交流学习。') ?>
                 </p>
                 <div class="mt-6 flex items-center text-sm font-medium text-pink-600 dark:text-pink-400 group-hover:gap-x-2 transition-all">
-                    <span>查看链接</span>
+                    <span><?= sanitizeHtml($i18n['friends']['view_links'] ?? '查看链接') ?></span>
                     <i class="fa-solid fa-arrow-right-long ml-1 group-hover:ml-2 transition-all"></i>
                 </div>
             </a>
@@ -207,6 +220,43 @@ $text = function(string $key, string $fallback) use ($pageI18n): string {
             </a>
         </div>
     </div>
+
+    <!-- Popular Articles -->
+    <?php if (!empty($hotDiaries)): ?>
+    <div class="mt-16">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-semibold tracking-tight">
+                <?= sanitizeHtml($text('popular_articles', '热门文章')) ?>
+            </h2>
+            <a href="hot.php" class="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:underline">
+                <?= sanitizeHtml($text('view_all_hot', '查看全部')) ?> <i class="fa-solid fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <?php foreach ($hotDiaries as $diary): ?>
+                <a href="diary-detail.php?id=<?= $diary['id'] ?>" class="group card bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl overflow-hidden flex flex-col h-full">
+                    <?php if (!empty($diary['cover_image'])): ?>
+                        <div class="h-40 overflow-hidden">
+                            <img src="<?= htmlspecialchars($diary['cover_image']) ?>" alt="<?= htmlspecialchars($diary['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                    <?php endif; ?>
+                    <div class="p-6 flex flex-col flex-1">
+                        <h3 class="font-semibold text-lg tracking-tight leading-tight mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                            <?= htmlspecialchars($diary['title']) ?>
+                        </h3>
+                        <div class="mt-auto flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <span><?= sanitizeHtml($diary['date']) ?></span>
+                            <span class="flex items-center gap-x-1">
+                                <i class="fa-solid fa-eye text-xs"></i>
+                                <?= formatViews($diary['views'] ?? 0) ?> <?= sanitizeHtml($i18n['diary']['views_count'] ?? '阅读') ?>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

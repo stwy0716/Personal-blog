@@ -1,7 +1,7 @@
 # 个人主页系统 Dockerfile
-# 基于 PHP 8.1 + Apache
+# 基于 PHP 8.3 + Apache
 
-FROM php:8.1-apache
+FROM php:8.3-apache
 
 # 安装系统依赖和 PHP 扩展
 RUN apt-get update && apt-get install -y \

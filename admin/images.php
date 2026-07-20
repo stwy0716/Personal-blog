@@ -43,15 +43,33 @@ if (is_dir($uploadDir)) {
     foreach ($allFiles as $file) {
         if ($file === '.' || $file === '..') continue;
         $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-        if (in_array($ext, $allowedExts)) {
-            $fullPath = $uploadDir . $file;
-            $images[] = [
-                'name' => $file,
-                'size' => filesize($fullPath),
-                'time' => filemtime($fullPath),
-                'url' => 'uploads/' . $file,
-            ];
+        if (!in_array($ext, $allowedExts)) continue;
+
+        // 跳过缩略图和中等尺寸文件
+        $baseName = pathinfo($file, PATHINFO_FILENAME);
+        if (str_ends_with($baseName, '_thumb') || str_ends_with($baseName, '_medium')) continue;
+
+        $fullPath = $uploadDir . $file;
+        $thumbFile = $baseName . '_thumb.' . $ext;
+        $mediumFile = $baseName . '_medium.' . $ext;
+        $thumbPath = $uploadDir . $thumbFile;
+        $mediumPath = $uploadDir . $mediumFile;
+
+        $dimensions = '';
+        $imgInfo = getimagesize($fullPath);
+        if ($imgInfo) {
+            $dimensions = $imgInfo[0] . ' x ' . $imgInfo[1];
         }
+
+        $images[] = [
+            'name' => $file,
+            'size' => filesize($fullPath),
+            'time' => filemtime($fullPath),
+            'url' => 'uploads/' . $file,
+            'thumb_url' => file_exists($thumbPath) ? 'uploads/' . $thumbFile : null,
+            'medium_url' => file_exists($mediumPath) ? 'uploads/' . $mediumFile : null,
+            'dimensions' => $dimensions,
+        ];
     }
     // 按时间倒序排列
     usort($images, fn($a, $b) => $b['time'] <=> $a['time']);
@@ -108,9 +126,10 @@ include __DIR__ . '/admin_header.php';
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-6">
                 <?php foreach ($pageImages as $img): ?>
                     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden group">
-                        <div class="aspect-square bg-zinc-800 flex items-center justify-center overflow-hidden cursor-pointer" onclick="openPreview('<?= sanitizeHtml($img['url']) ?>')">
-                            <img src="<?= sanitizeHtml($img['url']) ?>" alt="<?= sanitizeHtml($img['name']) ?>"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="aspect-square bg-zinc-800 flex items-center justify-center overflow-hidden cursor-pointer" onclick="openPreview('<?= sanitizeHtml($img['url']) ?>', '<?= sanitizeHtml($img['dimensions']) ?>', '<?= formatFileSize($img['size']) ?>')">
+                            <img src="<?= sanitizeHtml($img['thumb_url'] ?? $img['url']) ?>" alt="<?= sanitizeHtml($img['name']) ?>"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                 loading="lazy">
                         </div>
                         <div class="p-3">
                             <div class="text-xs font-medium truncate mb-1" title="<?= sanitizeHtml($img['name']) ?>"><?= sanitizeHtml($img['name']) ?></div>
@@ -122,6 +141,11 @@ include __DIR__ . '/admin_header.php';
                                 <button onclick="copyImageUrl('<?= sanitizeHtml($img['url']) ?>')" class="px-2 py-1 text-[10px] text-indigo-400 hover:text-indigo-300 bg-indigo-950/50 rounded-md transition-colors" title="复制URL">
                                     <i class="fa-solid fa-copy"></i>
                                 </button>
+                                <?php if ($img['medium_url']): ?>
+                                <button onclick="copyImageUrl('<?= sanitizeHtml($img['medium_url']) ?>')" class="px-2 py-1 text-[10px] text-emerald-400 hover:text-emerald-300 bg-emerald-950/50 rounded-md transition-colors" title="复制中等尺寸URL">
+                                    <i class="fa-solid fa-image"></i>
+                                </button>
+                                <?php endif; ?>
                                 <form method="POST" class="inline" onsubmit="return confirm('确认删除此图片？')">
                                     <?= csrfField() ?>
                                     <input type="hidden" name="delete_image" value="<?= sanitizeHtml($img['name']) ?>">
@@ -167,23 +191,37 @@ include __DIR__ . '/admin_header.php';
                 <i class="fa-solid fa-times"></i>
             </button>
             <img id="preview-image" src="" alt="" class="max-w-[90vw] max-h-[85vh] object-contain rounded-lg">
-            <div class="mt-3 flex items-center justify-center gap-x-3">
-                <span id="preview-url" class="text-sm text-white/50 truncate max-w-[400px]"></span>
-                <button onclick="copyPreviewUrl()" class="px-3 py-1 text-xs text-white bg-white/20 hover:bg-white/30 rounded-lg transition-colors">
-                    <i class="fa-solid fa-copy mr-1"></i> 复制URL
-                </button>
+            <div class="mt-3 flex flex-col items-center gap-y-2">
+                <div class="flex items-center gap-x-3 text-xs text-white/60">
+                    <span id="preview-dimensions" class="flex items-center gap-x-1"><i class="fa-solid fa-ruler-combined"></i> <span></span></span>
+                    <span id="preview-filesize" class="flex items-center gap-x-1"><i class="fa-solid fa-weight-hanging"></i> <span></span></span>
+                </div>
+                <div class="flex items-center justify-center gap-x-3">
+                    <span id="preview-url" class="text-sm text-white/50 truncate max-w-[400px]"></span>
+                    <button onclick="copyPreviewUrl()" class="px-3 py-1 text-xs text-white bg-white/20 hover:bg-white/30 rounded-lg transition-colors">
+                        <i class="fa-solid fa-copy mr-1"></i> 复制URL
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-    function openPreview(url) {
+    function openPreview(url, dimensions, fileSize) {
         const modal = document.getElementById('image-preview-modal');
         const img = document.getElementById('preview-image');
         const urlEl = document.getElementById('preview-url');
+        const dimEl = document.getElementById('preview-dimensions');
+        const sizeEl = document.getElementById('preview-filesize');
         img.src = url;
         urlEl.textContent = url;
         urlEl.dataset.url = url;
+        if (dimEl) {
+            dimEl.querySelector('span').textContent = dimensions || '-';
+        }
+        if (sizeEl) {
+            sizeEl.querySelector('span').textContent = fileSize || '-';
+        }
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden';

@@ -129,7 +129,7 @@ function handleAdminAuth() {
     sendSecurityHeaders();
     
     // 处理登出
-    if (isset($_GET['logout'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
         logoutAdmin();
         header('Location: ' . basename($_SERVER['PHP_SELF']));
         exit;
@@ -145,6 +145,11 @@ function handleAdminAuth() {
         } elseif (verifyAdminPassword($_POST['login_password'])) {
             loginAdmin();
             logOperation('login', '管理员登录');
+            $config = getAdminConfig();
+            if (empty($config['password_changed'])) {
+                header('Location: security.php');
+                exit;
+            }
             header('Location: ' . $_SERVER['REQUEST_URI']);
             exit;
         } else {

@@ -46,7 +46,7 @@ if ($type === 'guestbook') {
     foreach ($logs as $log) {
         // IP地址掩码处理（隐私保护）
         $ip = $log['ip'] ?? '';
-        $maskedIp = preg_replace('/\d+\.\d+/', '$1.***', $ip);
+        $maskedIp = preg_replace('/(\d+)\.\d+/', '$1.***', $ip);
         fputcsv($output, [
             $log['time'] ?? '',
             $log['action'] ?? '',

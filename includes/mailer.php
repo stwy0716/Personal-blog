@@ -128,10 +128,29 @@ function smtpSendMail($to, $subject, $body) {
     return strpos($response, '250') === 0;
 }
 
-function sendCommentNotification($type, $data) {
+function sendMailWithFallback($to, $subject, $body) {
+    if (smtpSendMail($to, $subject, $body)) {
+        return true;
+    }
+
+    // Fallback to PHP mail()
+    $headers = "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $headers .= "From: noreply@" . ($_SERVER['HTTP_HOST'] ?? 'localhost') . "\r\n";
+    $headers .= "X-Mailer: PersonalHomepage/2.0 (mail)\r\n";
+
+    return @mail($to, $subject, $body, $headers);
+}
+
+function sendCommentNotification($type, $data, $to = null) {
     $config = getSmtpConfig();
     $adminEmail = $config['admin_email'];
-    if (empty($adminEmail) || !filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
+
+    if ($to === null) {
+        $to = $adminEmail;
+    }
+
+    if (empty($to) || !filter_var($to, FILTER_VALIDATE_EMAIL)) {
         return false;
     }
 
@@ -142,10 +161,10 @@ function sendCommentNotification($type, $data) {
     $pageTitle = htmlspecialchars($data['page_title'] ?? '留言板');
 
     if ($type === 'reply') {
-        $subject = '[' . $siteTitle . '] ' . $pageTitle . ' 有新回复';
+        $subject = '[' . $siteTitle . '] 新回复: ' . $pageTitle;
         $typeLabel = '回复';
     } else {
-        $subject = '[' . $siteTitle . '] ' . $pageTitle . ' 有新评论';
+        $subject = '[' . $siteTitle . '] 新评论: ' . $pageTitle;
         $typeLabel = '新评论';
     }
 
@@ -158,10 +177,10 @@ function sendCommentNotification($type, $data) {
     $body .= '<p style="margin:0;font-size:14px;color:#27272a;line-height:1.6;">' . $content . '</p>';
     $body .= '</div>';
     if ($link) {
-        $body .= '<a href="' . $link . '" style="display:inline-block;padding:10px 20px;background:#4f46e5;color:#fff;text-decoration:none;border-radius:8px;font-size:13px;">查看站点</a>';
+        $body .= '<a href="' . $link . '" style="display:inline-block;padding:10px 20px;background:#4f46e5;color:#fff;text-decoration:none;border-radius:8px;font-size:13px;">查看页面</a>';
     }
     $body .= '<p style="margin:24px 0 0;font-size:12px;color:#a1a1aa;">这是一封自动通知邮件，请勿直接回复。</p>';
     $body .= '</div></body></html>';
 
-    return smtpSendMail($adminEmail, $subject, $body);
+    return sendMailWithFallback($to, $subject, $body);
 }

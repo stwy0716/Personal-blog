@@ -11,6 +11,8 @@ if (isset($_GET['step']) || isset($_GET['action'])) {
     // 允许通过
 }
 
+require_once __DIR__ . '/includes/security.php';
+
 $adminJsonPath = __DIR__ . '/data/admin.json';
 $contentJsonPath = __DIR__ . '/data/content.json';
 $isInstalled = file_exists($adminJsonPath);
@@ -21,6 +23,9 @@ $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
+
+    // CSRF 验证
+    verifyPostCsrf();
 
     if ($action === 'reinstall_confirm') {
         // 重新安装：删除 admin.json 和 content.json
@@ -50,8 +55,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($adminPassword)) {
             $errors[] = '管理员密码不能为空';
         }
-        if (mb_strlen($adminPassword) < 6) {
-            $errors[] = '管理员密码至少需要 6 个字符';
+        if (mb_strlen($adminPassword) < 8) {
+            $errors[] = '管理员密码至少需要 8 个字符';
+        }
+        if (!preg_match('/[a-zA-Z]/', $adminPassword)) {
+            $errors[] = '管理员密码需要包含至少一个字母';
+        }
+        if (!preg_match('/\d/', $adminPassword)) {
+            $errors[] = '管理员密码需要包含至少一个数字';
         }
         if ($adminPassword !== $adminPasswordConfirm) {
             $errors[] = '两次输入的密码不一致';
@@ -180,13 +191,181 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             'search' => '搜索',
                             'search_desc' => '通过关键词或标签搜索所有日记。',
                             'start_searching' => '开始搜索'
+                        ],
+                        'about' => [
+                            'intro' => '我是一名热爱生活的全栈开发者，喜欢构建美好的数字产品，也喜欢用镜头记录日常。',
+                            'timeline_title' => '时间线',
+                            'about_title' => '关于我',
+                            'about_subtitle' => '我的成长旅程与生活哲学',
+                            'my_story_label' => '我的故事',
+                            'welcome_intro' => '欢迎了解我的故事',
+                            'skills_title' => '技能',
+                            'no_timeline' => '暂无时间线数据，请在后台添加。',
+                            'no_skills' => '暂无技能数据',
+                            'contact_title' => '联系方式',
+                            'email_label' => '邮箱',
+                            'wechat_label' => '微信',
+                            'github_label' => 'GitHub',
+                            'view_projects' => '查看项目'
+                        ],
+                        'guestbook' => [
+                            'title' => '留言板',
+                            'subtitle' => '留下你的想法、建议或问候',
+                            'placeholder_name' => '你的名字',
+                            'placeholder_content' => '写下你想说的话...',
+                            'submit' => '提交留言',
+                            'reply' => '回复',
+                            'no_messages' => '暂无留言，来做第一个留言的人吧！',
+                            'closed_title' => '留言板已关闭',
+                            'closed_desc' => '管理员已关闭留言板功能。',
+                            'back_home' => '返回首页',
+                            'label' => '留言板',
+                            'leave_message' => '留言',
+                            'your_name' => '你的名字',
+                            'message' => '留言内容',
+                            'placeholder_message' => '写下你想说的话...',
+                            'placeholder_reply' => '回复...',
+                            'empty_message' => '留言内容不能为空',
+                            'submitting' => '提交中...',
+                            'submit_failed' => '提交失败，请重试',
+                            'network_error' => '网络错误，请检查服务器',
+                            'already_liked' => '你已经点赞过了',
+                            'empty_reply' => '回复内容不能为空',
+                            'reply_failed' => '回复失败',
+                            'playing' => '正在播放',
+                            'no_track' => '暂无曲目',
+                            'tooltip_theme' => '切换主题',
+                            'tooltip_back_to_top' => '回到顶部',
+                            'manage_content' => '管理内容'
+                        ],
+                        'diary' => [
+                            'title' => '日记',
+                            'subtitle' => '记录生活、技术与思考',
+                            'read_more' => '阅读更多',
+                            'tags' => '标签',
+                            'back_to_list' => '返回列表',
+                            'diary_detail' => [
+                                'not_published' => '该日记尚未发布',
+                                'check_back_later' => '请稍后再来看看。',
+                                'back_to_journal' => '返回日记',
+                                'draft_label' => '草稿',
+                                'edit_entry' => '编辑此篇',
+                                'all_entries' => '所有日记',
+                                'comments_title' => '评论',
+                                'nickname_label' => '昵称',
+                                'your_name_placeholder' => '你的名字',
+                                'comment_label' => '评论',
+                                'comment_placeholder' => '写下你的评论...',
+                                'post_comment' => '发表评论',
+                                'no_comments' => '暂无评论，来做第一个评论的人吧！',
+                                'discuss_guestbook' => '去留言板讨论',
+                                'toc_title' => '目录'
+                            ]
+                        ]
+                    ],
+                    'en' => [
+                        'nav' => ['home' => 'Home', 'about' => 'About', 'diary' => 'Journal', 'guestbook' => 'Guestbook'],
+                        'footer' => ['text' => 'Personal Space. Built with care.', 'playing' => 'Playing', 'no_track' => 'No track', 'tooltip_theme' => 'Toggle theme', 'tooltip_back_to_top' => 'Back to top'],
+                        'index' => [
+                            'explore_title' => 'Explore My World',
+                            'card_about_title' => 'About Me',
+                            'card_about_desc' => 'My timeline, growth journey, and skill tree. Learn how I got to where I am today.',
+                            'card_diary_title' => 'Journal',
+                            'card_diary_desc' => 'Life stories, tech insights, and travel notes. Rich text with image support.',
+                            'card_guestbook_title' => 'Guestbook',
+                            'card_guestbook_desc' => 'Leave a message, like, and reply. All messages are saved permanently.',
+                            'personal_digital_space' => 'Personal Digital Space',
+                            'read_latest_journal' => 'Read Latest Journal',
+                            'guestbook' => 'Guestbook',
+                            'blog_intro_title' => 'Blog Intro',
+                            'editable_hint' => 'Editable via Admin Panel > Content Management',
+                            'edit' => 'Edit',
+                            'view_my_story' => 'View My Story',
+                            'browse_all_entries' => 'Browse All Entries',
+                            'leave_a_message' => 'Leave a Message',
+                            'discover_more' => 'Discover More',
+                            'tags_cloud' => 'Tags Cloud',
+                            'tags_cloud_desc' => 'Explore all topics, browse journal entries by tag.',
+                            'browse_tags' => 'Browse Tags',
+                            'search' => 'Search',
+                            'search_desc' => 'Search all journal entries by keyword or tag.',
+                            'start_searching' => 'Start Searching'
+                        ],
+                        'about' => [
+                            'intro' => 'I\'m a passionate full-stack developer and life explorer. I love building beautiful digital products and capturing everyday moments through photography.',
+                            'timeline_title' => 'Timeline',
+                            'about_title' => 'About Me',
+                            'about_subtitle' => 'My Growth Journey & Life Philosophy',
+                            'my_story_label' => 'My Story',
+                            'welcome_intro' => 'Welcome to know my story',
+                            'skills_title' => 'Skills',
+                            'no_timeline' => 'No timeline data yet. Please add in admin panel.',
+                            'no_skills' => 'No skills data',
+                            'contact_title' => 'Contact',
+                            'email_label' => 'Email',
+                            'wechat_label' => 'WeChat',
+                            'github_label' => 'GitHub',
+                            'view_projects' => 'View Projects'
+                        ],
+                        'guestbook' => [
+                            'title' => 'Guestbook',
+                            'subtitle' => 'Leave your thoughts, suggestions, or greetings',
+                            'placeholder_name' => 'Your name',
+                            'placeholder_content' => 'Write something...',
+                            'submit' => 'Post Message',
+                            'reply' => 'Reply',
+                            'no_messages' => 'No messages yet. Be the first to leave one!',
+                            'closed_title' => 'Guestbook Closed',
+                            'closed_desc' => 'The admin has closed the guestbook.',
+                            'back_home' => 'Back to Home',
+                            'label' => 'Guestbook',
+                            'leave_message' => 'Leave a Message',
+                            'your_name' => 'Your Name',
+                            'message' => 'Message',
+                            'placeholder_message' => 'Write something...',
+                            'placeholder_reply' => 'Reply...',
+                            'empty_message' => 'Message cannot be empty',
+                            'submitting' => 'Submitting...',
+                            'submit_failed' => 'Submit failed, please try again',
+                            'network_error' => 'Network error, please check server',
+                            'already_liked' => 'You already liked this',
+                            'empty_reply' => 'Reply cannot be empty',
+                            'reply_failed' => 'Reply failed',
+                            'playing' => 'Playing',
+                            'no_track' => 'No track',
+                            'tooltip_theme' => 'Toggle theme',
+                            'tooltip_back_to_top' => 'Back to top',
+                            'manage_content' => 'Manage Content'
+                        ],
+                        'diary' => [
+                            'title' => 'Journal',
+                            'subtitle' => 'Life, tech, and reflections',
+                            'read_more' => 'Read More',
+                            'tags' => 'Tags',
+                            'back_to_list' => 'Back to List',
+                            'diary_detail' => [
+                                'not_published' => 'This entry is not published',
+                                'check_back_later' => 'Please check back later.',
+                                'back_to_journal' => 'Back to Journal',
+                                'draft_label' => 'Draft',
+                                'edit_entry' => 'Edit This Entry',
+                                'all_entries' => 'All Entries',
+                                'comments_title' => 'Comments',
+                                'nickname_label' => 'Nickname',
+                                'your_name_placeholder' => 'Your name',
+                                'comment_label' => 'Comment',
+                                'comment_placeholder' => 'Write your comment...',
+                                'post_comment' => 'Post Comment',
+                                'no_comments' => 'No comments yet. Be the first to comment!',
+                                'discuss_guestbook' => 'Discuss in Guestbook',
+                                'toc_title' => 'Table of Contents'
+                            ]
                         ]
                     ]
                 ]
             ];
 
-            $contentJson = json_encode($contentData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-            if (file_put_contents($contentJsonPath, $contentJson) === false) {
+            if (!writeJsonFile($contentJsonPath, $contentData)) {
                 $errors[] = '写入 content.json 失败，请检查 data/ 目录权限';
                 // 回滚：删除已创建的 admin.json
                 if (file_exists($adminJsonPath)) {
@@ -399,6 +578,7 @@ function renderStatusIcon(string $status): string {
                     <h3 class="text-lg font-bold text-white mb-2">确认重新安装？</h3>
                     <p class="text-slate-400 text-sm mb-6">此操作将删除管理员账号和所有站点配置数据。日记、留言等数据不会被删除。该操作不可撤销！</p>
                     <form method="POST" class="flex gap-3">
+                        <?= csrfField() ?>
                         <input type="hidden" name="action" value="reinstall_confirm">
                         <button type="button" onclick="hideReinstallConfirm()" class="flex-1 py-2.5 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors">
                             取消
@@ -509,6 +689,7 @@ function renderStatusIcon(string $status): string {
                 <?php endif; ?>
 
                 <form method="POST" id="installForm">
+                    <?= csrfField() ?>
                     <input type="hidden" name="action" value="install">
 
                     <div class="space-y-5">
@@ -530,15 +711,15 @@ function renderStatusIcon(string $status): string {
                             <p class="text-xs text-slate-500 mb-4">以下信息用于后台管理员登录</p>
                             <div>
                                 <label class="block text-sm font-medium text-slate-300 mb-1.5">管理员密码 <span class="text-red-400">*</span></label>
-                                <input type="password" name="admin_password" required minlength="6"
+                                <input type="password" name="admin_password" required minlength="8"
                                        id="adminPassword"
                                        class="input-dark w-full px-4 py-3 rounded-xl text-sm"
-                                       placeholder="至少 6 个字符">
+                                       placeholder="至少 8 个字符，包含字母和数字">
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-1.5">确认密码 <span class="text-red-400">*</span></label>
-                            <input type="password" name="admin_password_confirm" required minlength="6"
+                            <input type="password" name="admin_password_confirm" required minlength="8"
                                    id="adminPasswordConfirm"
                                    class="input-dark w-full px-4 py-3 rounded-xl text-sm"
                                    placeholder="再次输入密码">

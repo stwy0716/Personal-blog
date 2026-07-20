@@ -8,12 +8,20 @@ $allLogs = getOperationLogs(200);
 $search = trim($_GET['search'] ?? '');
 if ($search) {
     $logs = array_filter($allLogs, function($log) use ($search) {
-        return stripos($log['action'] ?? '', $search) !== false || 
+        return stripos($log['action'] ?? '', $search) !== false ||
                stripos($log['description'] ?? '', $search) !== false;
     });
 } else {
     $logs = $allLogs;
 }
+
+// Pagination
+$pageSize = 20;
+$totalLogs = count($logs);
+$totalPages = max(1, (int)ceil($totalLogs / $pageSize));
+$currentPage = max(1, min($totalPages, (int)($_GET['page'] ?? 1)));
+$offset = ($currentPage - 1) * $pageSize;
+$logs = array_slice($logs, $offset, $pageSize);
 $admin_page_title = '操作日志';
 include __DIR__ . '/admin_header.php';
 ?>
@@ -65,6 +73,31 @@ include __DIR__ . '/admin_header.php';
                         </tbody>
                     </table>
                 </div>
+                <?php if ($totalPages > 1): ?>
+                <div class="flex items-center justify-between mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                    <span class="text-xs text-zinc-500">
+                        第 <?= $currentPage ?> / <?= $totalPages ?> 页（共 <?= $totalLogs ?> 条）
+                    </span>
+                    <div class="flex items-center gap-x-2">
+                        <?php if ($currentPage > 1): ?>
+                            <a href="?page=<?= $currentPage - 1 ?><?= $search ? '&search=' . urlencode($search) : '' ?>"
+                               class="px-4 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                                上一页
+                            </a>
+                        <?php else: ?>
+                            <span class="px-4 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-400 cursor-not-allowed">上一页</span>
+                        <?php endif; ?>
+                        <?php if ($currentPage < $totalPages): ?>
+                            <a href="?page=<?= $currentPage + 1 ?><?= $search ? '&search=' . urlencode($search) : '' ?>"
+                               class="px-4 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                                下一页
+                            </a>
+                        <?php else: ?>
+                            <span class="px-4 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-400 cursor-not-allowed">下一页</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </div>

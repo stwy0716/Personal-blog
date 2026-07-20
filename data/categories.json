@@ -1,0 +1,5 @@
+[
+  {"id": 1, "name": "技术", "slug": "tech", "description": "编程、工具与工程技术分享", "sort_order": 1},
+  {"id": 2, "name": "生活", "slug": "life", "description": "日常生活与随想", "sort_order": 2},
+  {"id": 3, "name": "随笔", "slug": "notes", "description": "随想与感悟", "sort_order": 3}
+]

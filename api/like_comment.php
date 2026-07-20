@@ -9,6 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+$token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_POST['csrf_token'] ?? '';
+if (!verifyCsrfToken($token)) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'CSRF token invalid']);
+    exit;
+}
+
 // 速率限制
 if (!checkRateLimit('like', 30, 60)) {
     http_response_code(429);

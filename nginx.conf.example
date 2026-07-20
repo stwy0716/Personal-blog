@@ -36,19 +36,16 @@ server {
     # 禁止访问 data 目录（存储 JSON 数据，包含配置和密码哈希）
     location ^~ /data/ {
         deny all;
-        return 403;
     }
 
     # 禁止访问 backups 目录（存储备份文件）
     location ^~ /backups/ {
         deny all;
-        return 403;
     }
 
     # 禁止访问隐藏文件（如 .htaccess、.env、.git 等）
     location ~ /\. {
         deny all;
-        return 403;
     }
 
     # ----- 静态资源缓存规则 -----
@@ -111,12 +108,10 @@ server {
     # 禁止访问敏感文件类型
     location ~* \.(json|lock|env|yml|yaml|log|sql|bak|swp)$ {
         deny all;
-        return 403;
     }
 
     # 禁止访问 README 等信息文件
     location ~* /(README|LICENSE|CHANGELOG|composer\.(json|lock))$ {
         deny all;
-        return 403;
     }
 }

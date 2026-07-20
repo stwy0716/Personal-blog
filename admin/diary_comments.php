@@ -77,13 +77,13 @@ include __DIR__ . '/admin_header.php';
         <h1 class="text-3xl font-bold tracking-tight mb-6">日记评论管理</h1>
 
         <?php if (isset($_GET['deleted'])): ?>
-            <div class="mb-4 p-3 bg-amber-100 text-amber-700 rounded-xl text-sm">评论已删除。</div>
+            <div class="mb-4 p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-xl text-sm">评论已删除。</div>
         <?php endif; ?>
         <?php if (isset($_GET['toggled'])): ?>
-            <div class="mb-4 p-3 bg-blue-100 text-blue-700 rounded-xl text-sm">可见性已切换。</div>
+            <div class="mb-4 p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-xl text-sm">可见性已切换。</div>
         <?php endif; ?>
         <?php if (isset($_GET['edited'])): ?>
-            <div class="mb-4 p-3 bg-emerald-100 text-emerald-700 rounded-xl text-sm">评论已更新。</div>
+            <div class="mb-4 p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm">评论已更新。</div>
         <?php endif; ?>
 
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-7">
@@ -106,20 +106,20 @@ include __DIR__ . '/admin_header.php';
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-x-2">
-                                    <button onclick="toggleEdit(<?= (int)$c['id'] ?>)" class="text-xs px-3 h-8 flex items-center rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200">
+                                    <button onclick="toggleEdit(<?= (int)$c['id'] ?>)" class="text-xs px-3 h-8 flex items-center rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800">
                                         <i class="fa-solid fa-pen mr-1"></i> 编辑
                                     </button>
                                     <form method="POST" class="inline" onsubmit="return confirm('确认切换可见性？')">
                                         <?= csrfField() ?>
                                         <input type="hidden" name="toggle_id" value="<?= (int)$c['id'] ?>">
-                                        <button type="submit" class="text-xs px-3 h-8 flex items-center rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200">
+                                        <button type="submit" class="text-xs px-3 h-8 flex items-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-800">
                                             <i class="fa-solid fa-eye-slash mr-1"></i> <?= !empty($c['hidden']) ? '显示' : '隐藏' ?>
                                         </button>
                                     </form>
                                     <form method="POST" class="inline" onsubmit="return confirm('确认永久删除？')">
                                         <?= csrfField() ?>
                                         <input type="hidden" name="delete_id" value="<?= (int)$c['id'] ?>">
-                                        <button type="submit" class="text-xs px-3 h-8 flex items-center rounded-lg bg-red-100 text-red-600 hover:bg-red-200">
+                                        <button type="submit" class="text-xs px-3 h-8 flex items-center rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800">
                                             <i class="fa-solid fa-trash mr-1"></i> 删除
                                         </button>
                                     </form>

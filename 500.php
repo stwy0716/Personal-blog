@@ -1,6 +1,10 @@
 <?php
+require_once __DIR__ . '/includes/security.php';
+
+sendSecurityHeaders();
+
 $contentFile = __DIR__ . '/data/content.json';
-$content = file_exists($contentFile) ? json_decode(file_get_contents($contentFile), true) : [];
+$content = readJsonFile($contentFile);
 $error = $content['error_pages']['500'] ?? [
     'title' => '服务器错误',
     'message' => '发生了内部服务器错误，请稍后重试。',

@@ -1,6 +1,10 @@
 <?php
+require_once __DIR__ . '/includes/security.php';
+
+sendSecurityHeaders();
+
 $contentFile = __DIR__ . '/data/content.json';
-$content = file_exists($contentFile) ? json_decode(file_get_contents($contentFile), true) : [];
+$content = readJsonFile($contentFile);
 $error = $content['error_pages']['404'] ?? [
     'title' => '页面未找到',
     'message' => '抱歉，你访问的页面不存在或已被移动。',

@@ -67,7 +67,7 @@ function getTagColorClass($count, $max, $min) {
     <?php if (empty($tagCounts)): ?>
         <div class="text-center py-16 text-gray-400">
             <i class="fa-solid fa-tags text-5xl mb-4 opacity-40"></i>
-            <p>暂无标签。在后台为日记添加标签。</p>
+            <p><?= $i18n['tags']['no_tags'] ?? '暂无标签。在后台为日记添加标签。' ?></p>
         </div>
     <?php else: ?>
         <div class="<?php if ($glassEnabled): ?>glass-card<?php else: ?>bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700<?php endif; ?> rounded-3xl p-8 md:p-12">
@@ -84,7 +84,7 @@ function getTagColorClass($count, $max, $min) {
     <?php endif; ?>
 
     <div class="mt-10 flex justify-center">
-        <a href="diary.php" class="inline-flex items-center text-sm px-5 py-2.5 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 transition-colors">
+        <a href="diary.php" class="inline-flex items-center text-sm px-5 py-2.5 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors">
             <i class="fa-solid fa-arrow-left mr-2"></i>
             <span><?= $i18n['diary']['back_to_list'] ?? '返回日记' ?></span>
         </a>

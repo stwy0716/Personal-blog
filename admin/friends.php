@@ -113,12 +113,12 @@ include __DIR__ . '/admin_header.php';
         </div>
 
         <?php if (!empty($message)): ?>
-            <div class="mb-6 p-4 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center gap-x-2">
+            <div class="mb-6 p-4 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 rounded-2xl flex items-center gap-x-2">
                 <i class="fa-solid fa-check-circle"></i> <span><?= sanitizeHtml($message) ?></span>
             </div>
         <?php endif; ?>
         <?php if (!empty($error)): ?>
-            <div class="mb-6 p-4 bg-red-500/10 text-red-400 rounded-2xl flex items-center gap-x-2">
+            <div class="mb-6 p-4 bg-red-500/10 text-red-700 dark:text-red-400 rounded-2xl flex items-center gap-x-2">
                 <i class="fa-solid fa-exclamation-circle"></i> <span><?= sanitizeHtml($error) ?></span>
             </div>
         <?php endif; ?>
@@ -141,32 +141,32 @@ include __DIR__ . '/admin_header.php';
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="text-sm font-medium text-zinc-300 block mb-1.5">名称 *</label>
+                        <label class="text-sm font-medium text-gray-700 dark:text-zinc-300 block mb-1.5">名称 *</label>
                         <input type="text" name="name" value="<?= sanitizeHtml($editFriend['name'] ?? '') ?>" required
-                               class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="网站名称">
+                               class="w-full px-4 py-2.5 bg-transparent border border-gray-300 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="网站名称">
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-zinc-300 block mb-1.5">URL *</label>
+                        <label class="text-sm font-medium text-gray-700 dark:text-zinc-300 block mb-1.5">URL *</label>
                         <input type="url" name="url" value="<?= sanitizeHtml($editFriend['url'] ?? '') ?>" required
-                               class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="https://example.com">
+                               class="w-full px-4 py-2.5 bg-transparent border border-gray-300 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="https://example.com">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="text-sm font-medium text-zinc-300 block mb-1.5">头像URL</label>
+                        <label class="text-sm font-medium text-gray-700 dark:text-zinc-300 block mb-1.5">头像URL</label>
                         <input type="url" name="avatar" value="<?= sanitizeHtml($editFriend['avatar'] ?? '') ?>"
-                               class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="https://example.com/avatar.png">
+                               class="w-full px-4 py-2.5 bg-transparent border border-gray-300 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="https://example.com/avatar.png">
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-zinc-300 block mb-1.5">排序（越小越靠前）</label>
+                        <label class="text-sm font-medium text-gray-700 dark:text-zinc-300 block mb-1.5">排序（越小越靠前）</label>
                         <input type="number" name="sort_order" value="<?= (int)($editFriend['sort_order'] ?? 0) ?>" min="0"
-                               class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                               class="w-full px-4 py-2.5 bg-transparent border border-gray-300 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                     </div>
                 </div>
                 <div>
-                    <label class="text-sm font-medium text-zinc-300 block mb-1.5">描述</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-zinc-300 block mb-1.5">描述</label>
                     <textarea name="description" rows="2"
-                              class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none" placeholder="一句话描述"><?= sanitizeHtml($editFriend['description'] ?? '') ?></textarea>
+                              class="w-full px-4 py-2.5 bg-transparent border border-gray-300 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none" placeholder="一句话描述"><?= sanitizeHtml($editFriend['description'] ?? '') ?></textarea>
                 </div>
 
                 <div class="flex items-center gap-x-3">
@@ -174,7 +174,7 @@ include __DIR__ . '/admin_header.php';
                         <i class="fa-solid fa-save"></i> 保存
                     </button>
                     <?php if ($editFriend): ?>
-                        <a href="friends.php" class="px-4 py-2.5 text-sm text-zinc-400 hover:text-zinc-300 transition-colors">取消编辑</a>
+                        <a href="friends.php" class="px-4 py-2.5 text-sm text-gray-500 dark:text-zinc-400 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors">取消编辑</a>
                     <?php endif; ?>
                 </div>
             </form>
@@ -184,7 +184,7 @@ include __DIR__ . '/admin_header.php';
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-7">
             <h3 class="font-semibold text-lg mb-5">所有友情链接（<?= count($friends) ?>）</h3>
             <?php if (empty($friends)): ?>
-                <p class="text-zinc-400">暂无友情链接。</p>
+                <p class="text-gray-500 dark:text-zinc-400">暂无友情链接。</p>
             <?php else: ?>
                 <div class="space-y-3">
                     <?php foreach ($friends as $f): ?>
@@ -192,29 +192,29 @@ include __DIR__ . '/admin_header.php';
                             <?php if (!empty($f['avatar'])): ?>
                                 <img src="<?= sanitizeHtml($f['avatar']) ?>" alt="" class="w-10 h-10 rounded-xl object-cover flex-shrink-0">
                             <?php else: ?>
-                                <div class="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center flex-shrink-0">
-                                    <i class="fa-solid fa-link text-zinc-500"></i>
+                                <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-link text-gray-500 dark:text-zinc-500"></i>
                                 </div>
                             <?php endif; ?>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-x-2">
                                     <span class="font-medium text-sm truncate"><?= sanitizeHtml($f['name']) ?></span>
-                                    <a href="<?= sanitizeHtml($f['url']) ?>" target="_blank" class="text-zinc-500 hover:text-indigo-400 text-xs truncate max-w-[200px]">
+                                    <a href="<?= sanitizeHtml($f['url']) ?>" target="_blank" class="text-gray-500 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 text-xs truncate max-w-[200px]">
                                         <?= sanitizeHtml($f['url']) ?>
                                     </a>
                                 </div>
                                 <?php if (!empty($f['description'])): ?>
-                                    <div class="text-xs text-zinc-500 mt-0.5 truncate"><?= sanitizeHtml($f['description']) ?></div>
+                                    <div class="text-xs text-gray-500 dark:text-zinc-500 mt-0.5 truncate"><?= sanitizeHtml($f['description']) ?></div>
                                 <?php endif; ?>
                             </div>
                             <div class="flex items-center gap-x-2 flex-shrink-0">
-                                <a href="?edit=<?= (int)$f['id'] ?>" class="px-3 py-1.5 text-xs text-indigo-400 hover:text-indigo-300 bg-indigo-950/50 rounded-lg transition-colors">
+                                <a href="?edit=<?= (int)$f['id'] ?>" class="px-3 py-1.5 text-xs text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 rounded-lg transition-colors">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
                                 <form method="POST" class="inline" onsubmit="return confirm('确认删除此友情链接？')">
                                     <?= csrfField() ?>
                                     <input type="hidden" name="delete_id" value="<?= (int)$f['id'] ?>">
-                                    <button type="submit" class="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 bg-red-950/50 rounded-lg transition-colors">
+                                    <button type="submit" class="px-3 py-1.5 text-xs text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 bg-red-50 dark:bg-red-950/50 rounded-lg transition-colors">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
